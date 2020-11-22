@@ -110,9 +110,15 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         // meme image
     }
     else if (msg.type === "add-meme") {
-        // really slow but ok i guess
+        var memeType = msg.memeType || "satisfied";
+        var topText = msg.topText || "Wrote this code";
+        var bottomText = msg.bottomText || "Meme appeared";
+        memeType = memeType.split(" ").join("_");
+        topText = topText.split(" ").join("_");
+        bottomText = bottomText.split(" ").join("_");
+        // really slow to use this proxy to avoid cors error
         // we need to disable UI and show a loading state tho
-        const url = "https://cors-anywhere.herokuapp.com/https://urlme.me/satisfied/wrote_some_code/meme_appeared.jpg";
+        const url = `https://cors-anywhere.herokuapp.com/https://urlme.me/${memeType}/${topText}/${bottomText}.jpg`;
         figma.ui.postMessage({ type: 'getImageData', url });
         // handle image data
     }
@@ -122,8 +128,8 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         console.log(imageFrame);
         console.log(msg.data);
         imageFrame.fills = makeFillFromImageData(msg.data);
-        imageFrame.x = figma.viewport.center.x - imageFrame.width / 2 - 150;
-        imageFrame.y = figma.viewport.center.y - imageFrame.height / 2 + 110;
+        imageFrame.x = figma.viewport.center.x - imageFrame.width / 2;
+        imageFrame.y = figma.viewport.center.y - imageFrame.height / 2;
         // had to move this into each condition so it doesn't close before we get the image data
         figma.closePlugin();
     }
