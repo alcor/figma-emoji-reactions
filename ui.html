@@ -76,10 +76,10 @@ background-color:yellow;
 
 <p></p>
 <script>
-  document.body.className = "chat"
+document.body.className = "chat"
 function select(i) {
-console.log(i.id);
-document.body.className = i.id;
+  console.log(i.id);
+  document.body.className = i.id;
 }
 
 const textbox = document.getElementById('message');
@@ -87,39 +87,24 @@ textbox.focus()
 
 textbox.addEventListener("keyup", function(event) {
   if (event.keyCode === 13) {
+    console.log(document.body.className)
     event.preventDefault();
     const string = textbox.value;
-    parent.postMessage({ pluginMessage: { type: 'add-reaction', string } }, '*')
+    switch (document.body.className) {
+      case "emoji":
+        break;
+      case "sticky":
+        parent.postMessage({pluginMessage: {type: "add-sticky", content: string}}, '*')
+        break; 
+      case "meme":
+        break;
+      default:
+        parent.postMessage({ pluginMessage: { type: 'add-reaction', string } }, '*')
+    }
   } else if(event.key === "Escape") {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
   }
 });
-
-// stub calls to new plugin code
-const stickyBtn = document.getElementById('test-sticky');
-const stickyContent = document.getElementById('sticky-string');
-stickyBtn.addEventListener("click", (e) => {
-    const string = textbox.value
-    parent.postMessage({pluginMessage: {type: "add-sticky", content: stickyContent.value}}, '*')
-  }
-)
-
-const emojiBtn = document.getElementById('test-emoji');
-const emojiContent = document.getElementById('emoji-string');
-emojiBtn.addEventListener("click", (e) => {
-    console.log("emoji")
-  }
-)
-
-const memeBtn = document.getElementById('test-meme');
-const memeType = document.getElementById('meme-type');
-const memeTop = document.getElementById('meme-top-string');
-const memeBottom = document.getElementById('meme-bottom-string');
-memeBtn.addEventListener("click", (e) => {
-    console.log("meme")
-  }
-)
-// end stub
 
 
 </script>
