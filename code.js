@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-figma.showUI(__html__, { width: 300, height: 72 });
+figma.showUI(__html__, { width: 300, height: 400 });
 figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     const font = { family: "Arimo", style: "Bold" };
     yield figma.loadFontAsync(font);

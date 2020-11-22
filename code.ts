@@ -1,4 +1,4 @@
-figma.showUI(__html__, {width:300, height:72});
+figma.showUI(__html__, {width:300, height:400});
 
 figma.ui.onmessage = async (msg) => {
   const font = { family: "Arimo", style: "Bold" }
