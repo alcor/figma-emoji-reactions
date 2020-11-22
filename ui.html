@@ -125,4 +125,15 @@ tempMemeButton.addEventListener("click",(e) => {
   parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText}}, '*')
 })
 
+// image fetching only works in the UI for some reason
+onmessage = (e) => {
+  if (event.data.pluginMessage.type === 'getImageData') {
+      let url = e.data.pluginMessage.url
+      fetch(url)
+        .then(r => r.arrayBuffer())
+        .then(a => parent.postMessage({ pluginMessage: {type: 'image-data-received', data: new Uint8Array(a)} }, '*'))
+        .catch(err => console.error({ err }))
+  }
+}
+
 </script>

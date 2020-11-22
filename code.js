@@ -43,6 +43,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         var group = figma.group([frame], figma.currentPage);
         group.name = "Reaction: " + string;
         figma.currentPage.selection = [group];
+        figma.closePlugin();
         // sticky note
     }
     else if (msg.type === "add-sticky") {
@@ -73,6 +74,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         const group = figma.group([frame], figma.currentPage);
         group.name = `Sticky: ${text.characters}`;
         figma.currentPage.selection = [group];
+        figma.closePlugin();
         // emoji reaction  
     }
     else if (msg.type === "add-emoji") {
@@ -94,7 +96,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         const text = figma.createText();
         text.x = 10;
         text.y = 10;
-        text.characters = msg.content || "🤙";
+        text.characters = msg.content || "👍";
         text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
         text.fontName = font;
         text.fontSize = 42;
@@ -104,13 +106,27 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         const group = figma.group([frame], figma.currentPage);
         group.name = `Sticky: ${text.characters}`;
         figma.currentPage.selection = [group];
+        figma.closePlugin();
         // meme image
     }
     else if (msg.type === "add-meme") {
-        console.log("Meme");
-        console.log(msg);
+        // really slow but ok i guess
+        // we need to disable UI and show a loading state tho
+        const url = "https://cors-anywhere.herokuapp.com/https://urlme.me/satisfied/wrote_some_code/meme_appeared.jpg";
+        figma.ui.postMessage({ type: 'getImageData', url });
+        // handle image data
     }
-    figma.closePlugin();
+    else if (msg.type === "image-data-received") {
+        const imageFrame = figma.createFrame();
+        imageFrame.resizeWithoutConstraints(200, 200);
+        console.log(imageFrame);
+        console.log(msg.data);
+        imageFrame.fills = makeFillFromImageData(msg.data);
+        imageFrame.x = figma.viewport.center.x - imageFrame.width / 2 - 150;
+        imageFrame.y = figma.viewport.center.y - imageFrame.height / 2 + 110;
+        // had to move this into each condition so it doesn't close before we get the image data
+        figma.closePlugin();
+    }
 });
 // shadow effect style
 const shadowEffect = {
@@ -121,3 +137,29 @@ const shadowEffect = {
     visible: true,
     blendMode: "NORMAL",
 };
+// make image data into a fill
+function makeFillFromImageData(data) {
+    let imageHash = figma.createImage(data).hash;
+    const newFill = {
+        type: "IMAGE",
+        filters: {
+            contrast: 0,
+            exposure: 0,
+            highlights: 0,
+            saturation: 0,
+            shadows: 0,
+            temperature: 0,
+            tint: 0,
+        },
+        imageHash,
+        imageTransform: [
+            [1, 0, 0],
+            [0, 1, 0]
+        ],
+        opacity: 1,
+        scaleMode: "FIT",
+        scalingFactor: 0.5,
+        visible: true,
+    };
+    return ([newFill]);
+}
