@@ -48,7 +48,6 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     else if (msg.type === "add-sticky") {
         // fill color - hook this up later to something like `msg.fillColor`
         const fillColor = { r: 255 / 255, g: 231 / 255, b: 170 / 255 };
-        const shadow = figma.createEffectStyle();
         const frame = figma.createFrame();
         frame.resizeWithoutConstraints(200, 200);
         frame.x = figma.viewport.center.x - frame.width / 2;
@@ -79,6 +78,32 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     else if (msg.type === "add-emoji") {
         console.log("Emoji");
         console.log(msg);
+        const frame = figma.createFrame();
+        frame.x = figma.viewport.center.x - frame.width / 2;
+        frame.y = figma.viewport.center.y - frame.height / 2;
+        frame.horizontalPadding = frame.verticalPadding = 24;
+        frame.layoutMode = "HORIZONTAL";
+        frame.primaryAxisSizingMode = "AUTO";
+        frame.counterAxisSizingMode = "AUTO";
+        frame.fills = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }];
+        frame.strokeAlign = "INSIDE";
+        frame.strokeWeight = 1;
+        frame.strokes = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.15 }];
+        frame.effects = [shadowEffect];
+        frame.cornerRadius = frame.height / 2;
+        const text = figma.createText();
+        text.x = 10;
+        text.y = 10;
+        text.characters = msg.content || "🤙";
+        text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
+        text.fontName = font;
+        text.fontSize = 42;
+        text.textAlignHorizontal = "CENTER";
+        text.textAlignVertical = "CENTER";
+        frame.appendChild(text);
+        const group = figma.group([frame], figma.currentPage);
+        group.name = `Sticky: ${text.characters}`;
+        figma.currentPage.selection = [group];
         // meme image
     }
     else if (msg.type === "add-meme") {
