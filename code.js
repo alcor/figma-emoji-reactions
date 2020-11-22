@@ -77,9 +77,13 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         // emoji reaction  
     }
     else if (msg.type === "add-emoji") {
+        console.log("Emoji");
+        console.log(msg);
         // meme image
     }
     else if (msg.type === "add-meme") {
+        console.log("Meme");
+        console.log(msg);
     }
     figma.closePlugin();
 });

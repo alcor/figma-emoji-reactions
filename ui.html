@@ -37,7 +37,7 @@
 body.emoji #emoji-content.content,
 body.chat #message-content.content,
 body.sticky #message-content.content,
-body.meme #message-content.content,
+body.meme #meme-content.content,
 body.settings #settings-content.content
 { display:block }
 
@@ -62,10 +62,21 @@ background-color:yellow;
 
 <div class="content" id="emoji-content">
   ❤️👍
+  <button id="temporary-emoji-button">Place emoji</button>
 </div>
 
 <div class="content" id="message-content">
   <input id="message" placeholder="Message Content">
+</div>
+
+<div class="content" id="meme-content">
+  <label for="name">Type</label> 
+  <input id="meme-type" placeholder="meme type">
+  <label for="name">Top Text</label> 
+  <input id="meme-top-text" placeholder="top text">
+  <label for="name">Bottom Text</label> 
+  <input id="meme-bottom-text" placeholder="bottom text">
+  <button id="temporary-meme-button">Place meme</button>
 </div>
 
 <div class="content" id="settings-content">
@@ -74,7 +85,6 @@ background-color:yellow;
 </div>
                     
 
-<p></p>
 <script>
 document.body.className = "chat"
 function select(i) {
@@ -91,13 +101,9 @@ textbox.addEventListener("keyup", function(event) {
     event.preventDefault();
     const string = textbox.value;
     switch (document.body.className) {
-      case "emoji":
-        break;
       case "sticky":
         parent.postMessage({pluginMessage: {type: "add-sticky", content: string}}, '*')
         break; 
-      case "meme":
-        break;
       default:
         parent.postMessage({ pluginMessage: { type: 'add-reaction', string } }, '*')
     }
@@ -106,5 +112,17 @@ textbox.addEventListener("keyup", function(event) {
   }
 });
 
+const tempEmojiButton = document.getElementById("temporary-emoji-button");
+tempEmojiButton.addEventListener("click", (e) => {
+  parent.postMessage({pluginMessage: {type: "add-emoji", content: "👍"}}, '*')
+})
+
+const tempMemeButton = document.getElementById("temporary-meme-button");
+tempMemeButton.addEventListener("click",(e) => {
+  const memeType = document.getElementById('meme-type').value;
+  const topText = document.getElementById('meme-top-text').value;
+  const bottomText = document.getElementById('meme-bottom-text').value;
+  parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText}}, '*')
+})
 
 </script>

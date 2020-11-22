@@ -81,10 +81,12 @@ figma.ui.onmessage = async (msg) => {
 
   // emoji reaction  
   } else if (msg.type === "add-emoji") {
-
+    console.log("Emoji")
+    console.log(msg)
   // meme image
   } else if (msg.type === "add-meme") {
-
+    console.log("Meme")
+    console.log(msg)
   }
 
   figma.closePlugin();
