@@ -1,9 +1,33 @@
 <style>
-  body {margin:2px }
-input#string { font-size:20pt; width:100%; height:64px; box-sizing: border-box; padding:8px; }
+  body {margin:2px; font-family: "Roboto", -apple-system, sans-serif; }
+  input#string { font-size:20pt; width:100%; height:64px; box-sizing: border-box; padding:8px; }
+  section { margin-bottom: 8px}
 </style>
 
 <p><input id="string" placeholder="Message Content"></p>
+
+<!-- temp ui - this all gotta go -->
+
+<section>
+  <h3>Sticky</h3>
+  <input id="sticky-string" placeholder="Sticky content" />
+  <button id="test-sticky">Place sticky</button>
+</section>
+<section>
+  <h3>Emoji</h3>
+  <input id="emoji-string" placeholder="Emoji" />
+  <button id="test-emoji">Place emoji</button>
+</section>
+<section>
+  <h3>Meme</h3>
+  <input id="meme-string" placeholder="Meme type" />
+  <input id="meme-string" placeholder="Text line 1" />
+  <input id="meme-string" placeholder="Text line 2" />
+  <button id="test-meme">Place meme</button>
+</section>
+
+<!-- end temp ui -->
+
 <script>
 
 const textbox = document.getElementById('string');
@@ -18,5 +42,32 @@ textbox.addEventListener("keyup", function(event) {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
   }
 });
+
+// stub calls to new plugin code
+const stickyBtn = document.getElementById('test-sticky');
+const stickyContent = document.getElementById('sticky-string');
+stickyBtn.addEventListener("click", (e) => {
+    const string = textbox.value
+    parent.postMessage({pluginMessage: {type: "add-sticky", content: stickyContent.value}}, '*')
+  }
+)
+
+const emojiBtn = document.getElementById('test-emoji');
+const emojiContent = document.getElementById('emoji-string');
+emojiBtn.addEventListener("click", (e) => {
+    console.log("emoji")
+  }
+)
+
+const memeBtn = document.getElementById('test-meme');
+const memeType = document.getElementById('meme-type');
+const memeTop = document.getElementById('meme-top-string');
+const memeBottom = document.getElementById('meme-bottom-string');
+memeBtn.addEventListener("click", (e) => {
+    console.log("meme")
+  }
+)
+// end stub
+
 
 </script>
