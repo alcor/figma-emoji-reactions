@@ -22,6 +22,7 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeAlign = 'OUTSIDE'
     frame.strokeWeight = 1
     frame.strokes = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0}, opacity: 0.2 }]
+    frame.effects = [shadowEffect]
 
     var string = msg.string || "❤️"
     const label = figma.createText()
@@ -111,7 +112,7 @@ figma.ui.onmessage = async (msg) => {
     frame.appendChild(text)
 
     const group = figma.group([frame], figma.currentPage)
-    group.name = `Sticky: ${text.characters}`
+    group.name = `Reaction: ${text.characters}`
     figma.currentPage.selection = [group]
     
     figma.closePlugin();
@@ -130,13 +131,31 @@ figma.ui.onmessage = async (msg) => {
     figma.ui.postMessage({ type: 'getImageData', url })
   // handle image data
   } else if (msg.type === "image-data-received") {
+
+    const frame = figma.createFrame()
+    frame.x = figma.viewport.center.x - frame.width / 2
+    frame.y = figma.viewport.center.y - frame.height / 2
+    frame.horizontalPadding = frame.verticalPadding = 8
+    frame.layoutMode = "HORIZONTAL"
+    frame.primaryAxisSizingMode = "AUTO"
+    frame.counterAxisSizingMode = "AUTO"
+    frame.fills = [{type: "SOLID", color: {r: 1, g: 1, b: 1}}]
+    frame.strokeAlign = "INSIDE"
+    frame.strokeWeight = 1
+    frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
+    frame.effects = [shadowEffect]
+
     const imageFrame = figma.createFrame()
     imageFrame.resizeWithoutConstraints(200, 200)
-    console.log(imageFrame)
-    console.log(msg.data)
     imageFrame.fills = makeFillFromImageData(msg.data)
     imageFrame.x = figma.viewport.center.x - imageFrame.width / 2
     imageFrame.y = figma.viewport.center.y - imageFrame.height / 2
+
+    frame.appendChild(imageFrame)
+
+    const group = figma.group([frame], figma.currentPage)
+    group.name = `Meme`
+    figma.currentPage.selection = [group]
     
     // had to move this into each condition so it doesn't close before we get the image data
     figma.closePlugin();
