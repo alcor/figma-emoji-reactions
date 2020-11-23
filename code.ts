@@ -1,4 +1,4 @@
-figma.showUI(__html__, {width:300, height:400});
+figma.showUI(__html__, {width:300, height:260});
 
 async function main() {
   let settings = await figma.clientStorage.getAsync("settings")
@@ -11,6 +11,18 @@ figma.ui.onmessage = async (msg) => {
   await figma.loadFontAsync(font)
   await figma.loadFontAsync({ family: "Roboto", style: "Regular" })
 
+  let anchorX = figma.viewport.center.x;
+  let anchorY = figma.viewport.center.y;
+
+  let selection = figma.currentPage.selection[0];
+
+  if (selection) {
+    anchorX = selection.x + selection.width;
+    anchorY = selection.y;
+  }
+  
+
+
   // comment bubble
   if (msg.type === 'settings') {
     console.log("Setting received", msg.content)
@@ -19,8 +31,8 @@ figma.ui.onmessage = async (msg) => {
   } else if (msg.type === 'add-reaction') {
     const frame = figma.createFrame()
     frame.resizeWithoutConstraints(128, 48)
-    frame.x = figma.viewport.center.x - frame.width / 2
-    frame.y = figma.viewport.center.y - frame.height / 2
+    frame.x = anchorX - frame.width / 2
+    frame.y = anchorY - frame.height / 2
     frame.layoutMode = "VERTICAL"
     frame.horizontalPadding = 16
     frame.verticalPadding = 8
@@ -59,8 +71,8 @@ figma.ui.onmessage = async (msg) => {
 
     const frame = figma.createFrame()
     frame.resizeWithoutConstraints(200, 200)
-    frame.x = figma.viewport.center.x - frame.width / 2
-    frame.y = figma.viewport.center.y - frame.height / 2
+    frame.x = anchorX - frame.width / 2
+    frame.y = anchorY - frame.height / 2
     frame.horizontalPadding = frame.verticalPadding = 16
     // frame.layoutMode = "VERTICAL"
     frame.fills = [{type: "SOLID", color: fillColor}]
@@ -94,8 +106,8 @@ figma.ui.onmessage = async (msg) => {
     console.log(msg)
 
     const frame = figma.createFrame()
-    frame.x = figma.viewport.center.x - frame.width / 2
-    frame.y = figma.viewport.center.y - frame.height / 2
+    frame.x = anchorX - frame.width / 2
+    frame.y = anchorY - frame.height / 2
     frame.horizontalPadding = frame.verticalPadding = 24
     frame.layoutMode = "HORIZONTAL"
     frame.primaryAxisSizingMode = "AUTO"
@@ -141,8 +153,8 @@ figma.ui.onmessage = async (msg) => {
   } else if (msg.type === "image-data-received") {
 
     const frame = figma.createFrame()
-    frame.x = figma.viewport.center.x - frame.width / 2
-    frame.y = figma.viewport.center.y - frame.height / 2
+    frame.x = anchorX - frame.width / 2
+    frame.y = anchorY - frame.height / 2
     frame.horizontalPadding = frame.verticalPadding = 8
     frame.layoutMode = "HORIZONTAL"
     frame.primaryAxisSizingMode = "AUTO"
