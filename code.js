@@ -8,12 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 figma.showUI(__html__, { width: 300, height: 400 });
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let settings = yield figma.clientStorage.getAsync("settings");
+        console.log("Loading settings");
+        figma.ui.postMessage({ type: 'settings', settings });
+    });
+}
 figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     const font = { family: "Arimo", style: "Bold" };
     yield figma.loadFontAsync(font);
     yield figma.loadFontAsync({ family: "Roboto", style: "Regular" });
     // comment bubble
-    if (msg.type === 'add-reaction') {
+    if (msg.type === 'settings') {
+        console.log("Setting received", msg.content);
+        yield figma.clientStorage.setAsync("settings", msg.content);
+        figma.ui.postMessage(msg.content);
+    }
+    else if (msg.type === 'add-reaction') {
         const frame = figma.createFrame();
         frame.resizeWithoutConstraints(128, 48);
         frame.x = figma.viewport.center.x - frame.width / 2;
@@ -184,3 +196,4 @@ function makeFillFromImageData(data) {
     };
     return ([newFill]);
 }
+main();

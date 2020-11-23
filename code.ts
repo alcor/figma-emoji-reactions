@@ -1,14 +1,22 @@
 figma.showUI(__html__, {width:300, height:400});
 
+async function main() {
+  let settings = await figma.clientStorage.getAsync("settings")
+  console.log("Loading settings")
+  figma.ui.postMessage({type: 'settings', settings}) 
+}
+  
 figma.ui.onmessage = async (msg) => {
-  
-  const font = { family: "Arimo", style: "Bold" }
-  
+  const font = { family: "Arimo", style: "Bold" }  
   await figma.loadFontAsync(font)
   await figma.loadFontAsync({ family: "Roboto", style: "Regular" })
 
   // comment bubble
-  if (msg.type === 'add-reaction') {
+  if (msg.type === 'settings') {
+    console.log("Setting received", msg.content)
+    await figma.clientStorage.setAsync("settings", msg.content)
+    figma.ui.postMessage(msg.content)
+  } else if (msg.type === 'add-reaction') {
     const frame = figma.createFrame()
     frame.resizeWithoutConstraints(128, 48)
     frame.x = figma.viewport.center.x - frame.width / 2
@@ -201,3 +209,5 @@ function makeFillFromImageData(data) {
   }
   return ([ newFill ])
 }
+
+main();
