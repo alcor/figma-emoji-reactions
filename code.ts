@@ -7,40 +7,54 @@ async function main() {
 }
   
 figma.ui.onmessage = async (msg) => {
-  const font = { family: "Arimo", style: "Bold" }  
-  await figma.loadFontAsync(font)
-  await figma.loadFontAsync({ family: "Roboto", style: "Regular" })
-
-  let anchorX = figma.viewport.center.x;
-  let anchorY = figma.viewport.center.y;
-
-  let selection = figma.currentPage.selection[0];
-
-  if (selection) {
-    anchorX = selection.x + selection.width;
-    anchorY = selection.y;
-  }
-  
-
-
-  // comment bubble
   if (msg.type === 'settings') {
     console.log("Setting received", msg.content)
     await figma.clientStorage.setAsync("settings", msg.content)
     figma.ui.postMessage(msg.content)
-  } else if (msg.type === 'add-reaction') {
+    return
+  }
+
+  const font = { family: "Arimo", style: "Bold" }  
+  await figma.loadFontAsync(font)
+  await figma.loadFontAsync({ family: "Roboto", style: "Regular" })
+
+  let anchorX = figma.viewport.center.x
+  let anchorY = figma.viewport.center.y
+
+  let zoom = figma.viewport.zoom
+  let scale = 1 / zoom;
+  let bounds = figma.viewport.bounds
+  // TODO: check to make sure selection is visible / in bounds
+  let selection = figma.currentPage.selection[0]
+
+  // TODO: figure out canvas position of a nested selection
+  if (selection) {
+    anchorX = selection.x + selection.width;
+    anchorY = selection.y;
+  }
+
+  
+  let color = {r: 1, g: 1, b: 1}
+  
+  if (msg.color) {
+    var components = msg.color.match(/rgb\((\d+), ?(\d+), ?(\d+)\)/);
+    color = {r: parseInt(components[1])/255, g: parseInt(components[2])/255, b: parseInt(components[3])/255}  
+  }
+  
+  if (msg.type === 'add-bubble') {   // comment bubble
     const frame = figma.createFrame()
-    frame.resizeWithoutConstraints(128, 48)
-    frame.x = anchorX - frame.width / 2
-    frame.y = anchorY - frame.height / 2
+    frame.resizeWithoutConstraints(128 * scale, 48 * scale)
+    frame.x = anchorX
+    frame.y = anchorY - frame.height
     frame.layoutMode = "VERTICAL"
-    frame.horizontalPadding = 16
-    frame.verticalPadding = 8
+    frame.horizontalPadding = 16 * scale
+    frame.verticalPadding = 8 * scale
     frame.layoutAlign = "STRETCH"
     frame.cornerRadius = frame.height / 2;
     frame.bottomLeftRadius = 0;
     frame.strokeAlign = 'OUTSIDE'
     frame.strokeWeight = 1
+    frame.fills = [{ type: 'SOLID', color: color }]
     frame.strokes = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0}, opacity: 0.2 }]
     frame.effects = [shadowEffect]
 
@@ -49,8 +63,8 @@ figma.ui.onmessage = async (msg) => {
     label.layoutAlign = "STRETCH"
     label.fills = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0} }]
     label.characters = string
-    label.fontSize = 18
-    if (label.characters.length <= 3) label.fontSize = 48;
+    label.fontSize = 18 * scale
+    if (label.characters.length <= 3) label.fontSize = 48 * scale;
     label.textAlignHorizontal = 'CENTER'
     label.textAlignVertical = 'CENTER'
     label.textAutoResize = "WIDTH_AND_HEIGHT"
@@ -65,30 +79,26 @@ figma.ui.onmessage = async (msg) => {
 
   // sticky note
   } else if (msg.type === "add-sticky") {
-
-    // fill color - hook this up later to something like `msg.fillColor`
-    const fillColor = {r: 255/255, g: 241/255, b: 200/255}
-
     const frame = figma.createFrame()
-    frame.resizeWithoutConstraints(200, 200)
+    frame.resizeWithoutConstraints(200 * scale, 160 * scale)
     frame.x = anchorX - frame.width / 2
     frame.y = anchorY - frame.height / 2
-    frame.horizontalPadding = frame.verticalPadding = 16
+    frame.horizontalPadding = frame.verticalPadding = 16 * scale
     // frame.layoutMode = "VERTICAL"
-    frame.fills = [{type: "SOLID", color: fillColor}]
+    frame.fills = [{type: "SOLID", color: color}]
     frame.strokeAlign = "INSIDE"
     frame.strokeWeight = 1
     frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
     frame.effects = [shadowEffect]
 
     const text = figma.createText()
-    text.resizeWithoutConstraints(180, 180)
-    text.x = 10
-    text.y = 10
+    text.resizeWithoutConstraints(180 * scale, 140 * scale)
+    text.x = 10 * scale
+    text.y = 10 * scale
     text.characters = msg.content || "🤙"
     text.fills = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.8}]
     text.fontName = font
-    text.fontSize = 18
+    text.fontSize = 18 * scale
     text.textAlignHorizontal = "CENTER"
     text.textAlignVertical ="CENTER"
 
@@ -108,7 +118,9 @@ figma.ui.onmessage = async (msg) => {
     const frame = figma.createFrame()
     frame.x = anchorX - frame.width / 2
     frame.y = anchorY - frame.height / 2
-    frame.horizontalPadding = frame.verticalPadding = 24
+
+    frame.resizeWithoutConstraints(72 * scale, 72 * scale)
+    frame.horizontalPadding = frame.verticalPadding = 24 * scale
     frame.layoutMode = "HORIZONTAL"
     frame.primaryAxisSizingMode = "AUTO"
     frame.counterAxisSizingMode = "AUTO"
@@ -120,12 +132,12 @@ figma.ui.onmessage = async (msg) => {
     frame.cornerRadius = frame.height/2
 
     const text = figma.createText()
-    text.x = 10
-    text.y = 10
+    text.x = 10 * scale
+    text.y = 10 * scale
     text.characters = msg.content || "👍"
     text.fills = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.8}]
     text.fontName = font
-    text.fontSize = 42
+    text.fontSize = 42 * scale
     text.textAlignHorizontal = "CENTER"
     text.textAlignVertical ="CENTER"
 
@@ -135,7 +147,9 @@ figma.ui.onmessage = async (msg) => {
     group.name = `Reaction: ${text.characters}`
     figma.currentPage.selection = [group]
     
-    figma.closePlugin();
+    if (!msg.altPressed) {
+      figma.closePlugin()
+    }
 
   // meme image
   } else if (msg.type === "add-meme") {
