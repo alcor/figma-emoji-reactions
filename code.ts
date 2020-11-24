@@ -67,7 +67,7 @@ figma.ui.onmessage = async (msg) => {
   } else if (msg.type === "add-sticky") {
 
     // fill color - hook this up later to something like `msg.fillColor`
-    const fillColor = {r: 255/255, g: 231/255, b: 170/255}
+    const fillColor = {r: 255/255, g: 241/255, b: 200/255}
 
     const frame = figma.createFrame()
     frame.resizeWithoutConstraints(200, 200)
