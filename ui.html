@@ -258,7 +258,7 @@ function select(i) {
   textbox.focus()
 }
 function saveSettings() {
-  parent.postMessage({pluginMessage: {type: "settings", content: settings}}, '*')
+  parent.postMessage({pluginMessage: {type: "settings", settings}}, '*')
   applyColors();
 }
 
@@ -275,7 +275,7 @@ document.body.onclick = function(e){
     var string = el.textContent;
 
     var altPressed = e.altKey
-    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed}}, '*')      
+    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings}}, '*')      
   } else if (el.className && el.className.indexOf('color-button')!=-1) {
     var color = el.style.backgroundColor;
     if (settings.tab === "bubble") {
@@ -299,10 +299,10 @@ textbox.addEventListener("keyup", function(event) {
     const string = textbox.value;
     switch (document.body.className) {
       case "sticky":
-        parent.postMessage({pluginMessage: {type: "add-sticky", content: string, color:settings.stickyColor}}, '*')
+        parent.postMessage({pluginMessage: {type: "add-sticky", content: string, color:settings.stickyColor, settings}}, '*')
         break; 
       default:
-        parent.postMessage({ pluginMessage: { type: 'add-bubble', string,  color:settings.bubbleColor} }, '*')
+        parent.postMessage({ pluginMessage: { type: 'add-bubble', string,  color:settings.bubbleColor, settings} }, '*')
     }
   } else if(event.key === "Escape") {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
@@ -314,7 +314,7 @@ tempMemeButton.addEventListener("click",(e) => {
   const memeType = document.getElementById('meme-type').value;
   const topText = document.getElementById('meme-top-text').value;
   const bottomText = document.getElementById('meme-bottom-text').value;
-  parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText}}, '*')
+  parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText, settings}}, '*')
 })
 
 // image fetching only works in the UI for some reason

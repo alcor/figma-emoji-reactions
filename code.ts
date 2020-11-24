@@ -8,9 +8,8 @@ async function main() {
   
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'settings') {
-    console.log("Setting received", msg.content)
-    await figma.clientStorage.setAsync("settings", msg.content)
-    figma.ui.postMessage(msg.content)
+    console.log("Setting received", msg.settings)
+    await figma.clientStorage.setAsync("settings", msg.settings)
     return
   }
 
@@ -26,6 +25,7 @@ figma.ui.onmessage = async (msg) => {
   let bounds = figma.viewport.bounds
   // TODO: check to make sure selection is visible / in bounds
   let selection = figma.currentPage.selection[0]
+  let name = msg.settings.name
 
   // TODO: figure out canvas position of a nested selection
   if (selection) {
@@ -59,20 +59,20 @@ figma.ui.onmessage = async (msg) => {
     frame.effects = [shadowEffect]
 
     var string = msg.string || "❤️"
-    const label = figma.createText()
-    label.layoutAlign = "STRETCH"
-    label.fills = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0} }]
-    label.characters = string
-    label.fontSize = 18 * scale
-    if (label.characters.length <= 3) label.fontSize = 48 * scale;
-    label.textAlignHorizontal = 'CENTER'
-    label.textAlignVertical = 'CENTER'
-    label.textAutoResize = "WIDTH_AND_HEIGHT"
-    label.fontName = font
-    frame.appendChild(label)
+    const text = figma.createText()
+    text.layoutAlign = "STRETCH"
+    text.fills = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0} }]
+    text.characters = string
+    text.fontSize = 18 * scale
+    if (text.characters.length <= 3) text.fontSize = 48 * scale;
+    text.textAlignHorizontal = 'CENTER'
+    text.textAlignVertical = 'CENTER'
+    text.textAutoResize = "WIDTH_AND_HEIGHT"
+    text.fontName = font
+    frame.appendChild(text)
 
     var group = figma.group([frame], figma.currentPage)
-    group.name = "Reaction: " + string
+    group.name = `${name || "Comment"}: ${text.characters}`
     group.expanded = false;
     figma.currentPage.selection = [group];
 
@@ -106,7 +106,7 @@ figma.ui.onmessage = async (msg) => {
     frame.appendChild(text)
 
     const group = figma.group([frame], figma.currentPage)
-    group.name = `Sticky: ${text.characters}`
+    group.name = `${name || "Sticky"}: ${text.characters}`
     group.expanded = false;
 
     figma.currentPage.selection = [group]
@@ -147,7 +147,7 @@ figma.ui.onmessage = async (msg) => {
     frame.appendChild(text)
 
     const group = figma.group([frame], figma.currentPage)
-    group.name = `Reaction: ${text.characters}`
+    group.name = group.name = `${name ? name + ": " : ""}${text.characters}`
     group.expanded = false;
     figma.currentPage.selection = [group]
     
@@ -192,7 +192,7 @@ figma.ui.onmessage = async (msg) => {
     frame.appendChild(imageFrame)
 
     const group = figma.group([frame], figma.currentPage)
-    group.name = `Meme`
+    group.name = `${name || "Meme"}: Meme`
     group.expanded = false;
 
     figma.currentPage.selection = [group]

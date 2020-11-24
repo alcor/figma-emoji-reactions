@@ -17,9 +17,8 @@ function main() {
 }
 figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     if (msg.type === 'settings') {
-        console.log("Setting received", msg.content);
-        yield figma.clientStorage.setAsync("settings", msg.content);
-        figma.ui.postMessage(msg.content);
+        console.log("Setting received", msg.settings);
+        yield figma.clientStorage.setAsync("settings", msg.settings);
         return;
     }
     const font = { family: "Arimo", style: "Bold" };
@@ -32,6 +31,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     let bounds = figma.viewport.bounds;
     // TODO: check to make sure selection is visible / in bounds
     let selection = figma.currentPage.selection[0];
+    let name = msg.settings.name;
     // TODO: figure out canvas position of a nested selection
     if (selection) {
         anchorX = selection.x + selection.width;
@@ -59,20 +59,20 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 0.2 }];
         frame.effects = [shadowEffect];
         var string = msg.string || "❤️";
-        const label = figma.createText();
-        label.layoutAlign = "STRETCH";
-        label.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
-        label.characters = string;
-        label.fontSize = 18 * scale;
-        if (label.characters.length <= 3)
-            label.fontSize = 48 * scale;
-        label.textAlignHorizontal = 'CENTER';
-        label.textAlignVertical = 'CENTER';
-        label.textAutoResize = "WIDTH_AND_HEIGHT";
-        label.fontName = font;
-        frame.appendChild(label);
+        const text = figma.createText();
+        text.layoutAlign = "STRETCH";
+        text.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
+        text.characters = string;
+        text.fontSize = 18 * scale;
+        if (text.characters.length <= 3)
+            text.fontSize = 48 * scale;
+        text.textAlignHorizontal = 'CENTER';
+        text.textAlignVertical = 'CENTER';
+        text.textAutoResize = "WIDTH_AND_HEIGHT";
+        text.fontName = font;
+        frame.appendChild(text);
         var group = figma.group([frame], figma.currentPage);
-        group.name = "Reaction: " + string;
+        group.name = `${name || "Comment"}: ${text.characters}`;
         group.expanded = false;
         figma.currentPage.selection = [group];
         figma.closePlugin();
@@ -102,7 +102,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         text.textAlignVertical = "CENTER";
         frame.appendChild(text);
         const group = figma.group([frame], figma.currentPage);
-        group.name = `Sticky: ${text.characters}`;
+        group.name = `${name || "Sticky"}: ${text.characters}`;
         group.expanded = false;
         figma.currentPage.selection = [group];
         figma.closePlugin();
@@ -136,7 +136,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         text.textAlignVertical = "CENTER";
         frame.appendChild(text);
         const group = figma.group([frame], figma.currentPage);
-        group.name = `Reaction: ${text.characters}`;
+        group.name = group.name = `${name ? name + ": " : ""}${text.characters}`;
         group.expanded = false;
         figma.currentPage.selection = [group];
         if (!msg.altPressed) {
@@ -177,7 +177,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         imageFrame.y = figma.viewport.center.y - imageFrame.height / 2;
         frame.appendChild(imageFrame);
         const group = figma.group([frame], figma.currentPage);
-        group.name = `Meme`;
+        group.name = `${name || "Meme"}: Meme`;
         group.expanded = false;
         figma.currentPage.selection = [group];
         // had to move this into each condition so it doesn't close before we get the image data
