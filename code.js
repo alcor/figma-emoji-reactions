@@ -73,6 +73,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.appendChild(label);
         var group = figma.group([frame], figma.currentPage);
         group.name = "Reaction: " + string;
+        group.expanded = false;
         figma.currentPage.selection = [group];
         figma.closePlugin();
         // sticky note
@@ -102,6 +103,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.appendChild(text);
         const group = figma.group([frame], figma.currentPage);
         group.name = `Sticky: ${text.characters}`;
+        group.expanded = false;
         figma.currentPage.selection = [group];
         figma.closePlugin();
         // emoji reaction  
@@ -135,6 +137,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.appendChild(text);
         const group = figma.group([frame], figma.currentPage);
         group.name = `Reaction: ${text.characters}`;
+        group.expanded = false;
         figma.currentPage.selection = [group];
         if (!msg.altPressed) {
             figma.closePlugin();
@@ -175,6 +178,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.appendChild(imageFrame);
         const group = figma.group([frame], figma.currentPage);
         group.name = `Meme`;
+        group.expanded = false;
         figma.currentPage.selection = [group];
         // had to move this into each condition so it doesn't close before we get the image data
         figma.closePlugin();
