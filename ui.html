@@ -39,7 +39,7 @@ footer {
     margin-bottom:1em;
   }
 
-  .color {
+  .color-button {
     width:24px; height:24px;
     box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.1);
     margin-right:1em;
@@ -84,7 +84,7 @@ footer {
   body.settings .tab#settings {
     background-color:#f1f1f1;
   }
-y
+
   body.chat #message-content.content,
   body.sticky #message-content.content,
   body.chat #color-content.content,
@@ -100,7 +100,7 @@ y
     width:auto;
     height: auto;
     position:relative;
-
+    transition: background-color 100ms, min-height 100ms, border-radius 100ms;
   }
 
   body.sticky #message-content {
@@ -210,12 +210,12 @@ y
 
 <div class="content" id="color-content">                 
   <div class="colors">
-    <div class="color" style="background-color:#ffffff"></div>
-    <div class="color" style="background-color:#f1f1f1"></div>
-    <div class="color" style="background-color:#fdf8c9"></div>
-    <div class="color" style="background-color:#dcfdc9"></div>
-    <div class="color" style="background-color:#c9f5fd"></div>
-    <div class="color" style="background-color:#ffe1ea"></div>
+    <div class="color-button" style="background-color:#ffffff"></div>
+    <div class="color-button" style="background-color:#f1f1f1"></div>
+    <div class="color-button" style="background-color:#fdf8c9"></div>
+    <div class="color-button" style="background-color:#dcfdc9"></div>
+    <div class="color-button" style="background-color:#c9f5fd"></div>
+    <div class="color-button" style="background-color:#ffe1ea"></div>
   </div>
 </div>
 
@@ -242,18 +242,50 @@ y
 <script>
 document.body.className = "chat";
 
+var settings = {
+  tab:"emoji",
+  chatColor:"white",
+  stickyColor:"#FFF1C8",
+  name:""
+}
 function select(i) {
   console.log(i.id);
-  parent.postMessage({pluginMessage: {type: "settings", content: {tab: i.id}}}, '*')
+  settings.tab = i.id;
+  saveSettings();
   document.body.className = i.id;
+ 
+
   textbox.focus()
 }
+function saveSettings() {
+  parent.postMessage({pluginMessage: {type: "settings", content: settings}}, '*')
+  applyColors();
+}
 
+function applyColors() {
+  if (settings.tab === "chat") {
+    document.getElementById("message-content").style.backgroundColor = settings.chatColor;
+  } else if (settings.tab === "sticky") {
+    document.getElementById("message-content").style.backgroundColor = settings.stickyColor;
+  }
+}
 document.body.onclick = function(e){
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {
     var string = el.textContent;
-    parent.postMessage({pluginMessage: {type: "add-emoji", content: string}}, '*')
+
+    var altPressed = e.altKey
+    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed}}, '*')      
+  } else if (el.className && el.className.indexOf('color-button')!=-1) {
+    var color = el.style.backgroundColor;
+    if (settings.tab === "chat") {
+      settings.chatColor = color;
+    } else if (settings.tab === "sticky") {
+      settings.stickyColor = color;
+    }
+    saveSettings();
+    console.log(color)
+    //parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed}}, '*')      
   }
 }
 
@@ -263,14 +295,15 @@ textbox.focus()
 textbox.addEventListener("keyup", function(event) {
   if (event.keyCode === 13) {
     console.log(document.body.className)
+    var altPressed = event.altKey
     event.preventDefault();
     const string = textbox.value;
     switch (document.body.className) {
       case "sticky":
-        parent.postMessage({pluginMessage: {type: "add-sticky", content: string}}, '*')
+        parent.postMessage({pluginMessage: {type: "add-sticky", content: string, color:settings.stickyColor}}, '*')
         break; 
       default:
-        parent.postMessage({ pluginMessage: { type: 'add-reaction', string } }, '*')
+        parent.postMessage({ pluginMessage: { type: 'add-reaction', string,  color:settings.chatColor} }, '*')
     }
   } else if(event.key === "Escape") {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
@@ -295,6 +328,8 @@ onmessage = (e) => {
         .then(a => parent.postMessage({ pluginMessage: {type: 'image-data-received', data: new Uint8Array(a)} }, '*'))
         .catch(err => console.error({ err }))
   } else if (message.type === 'settings') {
+    settings = message.settings;
+    applyColors()
     document.body.className = message.settings.tab;
   }
 }
