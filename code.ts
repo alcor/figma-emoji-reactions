@@ -1,4 +1,4 @@
-figma.showUI(__html__, {width:300, height:240});
+figma.showUI(__html__, {width:300, height:320});
 
 async function main() {
   let settings = await figma.clientStorage.getAsync("settings")

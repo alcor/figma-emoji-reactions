@@ -32,28 +32,28 @@
 
   .colors {
     display:flex;
-    justify-content: start;
+    justify-content: space-between;
+
     margin: 0 0;
-    margin-bottom:1em;
+    margin-top:1em;
   }
 
   .color-button {
-    width:25px; height:25px;
+    width:20px; height:20px;
     box-shadow: inset 0px -1px 0.5px 1px rgba(0,0,0,0.1);
-    margin-right:8px;
     display:inline-block;
     border-radius:999px;
   }
 
   .content {
-    display:none;
     padding:0 1em;
     flex-direction: column;
   }
 
   .tab {
+    width:20px; height:20px;
     background-position: center;
-    background-size:32px;
+    background-size:20px;
     background-repeat: no-repeat;
   }
 
@@ -61,11 +61,9 @@
     background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='4.5' y='4.5' width='23' height='23' rx='11.5' fill='%23F3F3F3' stroke='black'/%3E%3Cline x1='13.5' y1='11' x2='13.5' y2='17' stroke='black'/%3E%3Cline x1='18.5' y1='11' x2='18.5' y2='17' stroke='black'/%3E%3C/svg%3E%0A");
   }
   .tab#bubble { 
-    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 27.5H4.5V16C4.5 9.64873 9.64873 4.5 16 4.5C22.3513 4.5 27.5 9.64873 27.5 16C27.5 22.3513 22.3513 27.5 16 27.5Z' fill='%23F3F3F3' stroke='black'/%3E%3C/svg%3E%0A");
-  }
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 17H3V10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10C17 13.866 13.866 17 10 17Z' stroke='%23414141' stroke-width='2'/%3E%3C/svg%3E%0A");  }
   .tab#sticky { 
-    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='path-1-inside-1' fill='white'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M28 4H4V28H21L28 21V4Z'/%3E%3C/mask%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M28 4H4V28H21L28 21V4Z' fill='%23F3F3F3'/%3E%3Cpath d='M4 4V3H3V4H4ZM28 4H29V3H28V4ZM4 28H3V29H4V28ZM21 28V29H21.4142L21.7071 28.7071L21 28ZM28 21L28.7071 21.7071L29 21.4142V21H28ZM4 5H28V3H4V5ZM5 28V4H3V28H5ZM21 27H4V29H21V27ZM21.7071 28.7071L28.7071 21.7071L27.2929 20.2929L20.2929 27.2929L21.7071 28.7071ZM27 4V21H29V4H27Z' fill='black' mask='url(%23path-1-inside-1)'/%3E%3Cpath d='M21 27.2929L21 21L27.2929 21L21 27.2929Z' stroke='black' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
-  }
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='path-1-inside-1' fill='white'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2 2H18V18H6.66667L2 13.3333V2Z'/%3E%3C/mask%3E%3Cpath d='M18 2V0H20V2H18ZM2 2H0V0H2V2ZM18 18H20V20H18V18ZM6.66667 18V20H5.83824L5.25245 19.4142L6.66667 18ZM2 13.3333L0.585786 14.7475L0 14.1618V13.3333H2ZM18 4H2V0H18V4ZM16 18V2H20V18H16ZM6.66667 16H18V20H6.66667V16ZM5.25245 19.4142L0.585786 14.7475L3.41421 11.9191L8.08088 16.5858L5.25245 19.4142ZM4 2V13.3333H0V2H4Z' fill='%23444444' mask='url(%23path-1-inside-1)'/%3E%3C/svg%3E%0A");  }
 
   .tab#meme { 
     background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='3.5' y='5.5' width='25' height='21' fill='%23F3F3F3' stroke='black'/%3E%3Cmask id='path-2-inside-1' fill='white'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M12.6171 12.1216L10 11V13.9232C9.36518 14.6757 9 15.5574 9 16.5C9 19.2614 12.134 21.5 16 21.5C19.866 21.5 23 19.2614 23 16.5C23 15.5574 22.6348 14.6757 22 13.9232V11L19.1975 12.0509C18.239 11.6988 17.152 11.5 16 11.5C14.773 11.5 13.6198 11.7255 12.6171 12.1216Z'/%3E%3C/mask%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M12.6171 12.1216L10 11V13.9232C9.36518 14.6757 9 15.5574 9 16.5C9 19.2614 12.134 21.5 16 21.5C19.866 21.5 23 19.2614 23 16.5C23 15.5574 22.6348 14.6757 22 13.9232V11L19.1975 12.0509C18.239 11.6988 17.152 11.5 16 11.5C14.773 11.5 13.6198 11.7255 12.6171 12.1216Z' fill='white'/%3E%3Cpath d='M10 11L10.3939 10.0809L9 9.48346V11H10ZM12.6171 12.1216L12.2232 13.0407L12.6016 13.2029L12.9845 13.0517L12.6171 12.1216ZM10 13.9232L10.7644 14.5679L11 14.2886V13.9232H10ZM22 13.9232H21V14.2886L21.2356 14.5679L22 13.9232ZM22 11H23V9.557L21.6489 10.0637L22 11ZM19.1975 12.0509L18.8526 12.9896L19.2011 13.1176L19.5486 12.9873L19.1975 12.0509ZM9.60608 11.9191L12.2232 13.0407L13.011 11.2025L10.3939 10.0809L9.60608 11.9191ZM11 13.9232V11H9V13.9232H11ZM10 16.5C10 15.8284 10.2575 15.1688 10.7644 14.5679L9.23564 13.2784C8.47288 14.1826 8 15.2863 8 16.5H10ZM16 20.5C14.2514 20.5 12.7101 19.9922 11.6315 19.2218C10.551 18.45 10 17.4739 10 16.5H8C8 18.2875 9.01603 19.8114 10.469 20.8493C11.9239 21.8885 13.8826 22.5 16 22.5V20.5ZM22 16.5C22 17.4739 21.449 18.45 20.3685 19.2218C19.2899 19.9922 17.7486 20.5 16 20.5V22.5C18.1174 22.5 20.0761 21.8885 21.531 20.8493C22.984 19.8114 24 18.2875 24 16.5H22ZM21.2356 14.5679C21.7425 15.1688 22 15.8284 22 16.5H24C24 15.2863 23.5271 14.1826 22.7644 13.2784L21.2356 14.5679ZM23 13.9232V11H21V13.9232H23ZM21.6489 10.0637L18.8464 11.1146L19.5486 12.9873L22.3511 11.9363L21.6489 10.0637ZM16 12.5C17.0382 12.5 18.0082 12.6793 18.8526 12.9896L19.5424 11.1123C18.4699 10.7182 17.2658 10.5 16 10.5V12.5ZM12.9845 13.0517C13.8659 12.7035 14.894 12.5 16 12.5V10.5C14.652 10.5 13.3737 10.7475 12.2497 11.1915L12.9845 13.0517Z' fill='black' mask='url(%23path-2-inside-1)'/%3E%3Cline x1='17.5' y1='15' x2='17.5' y2='16' stroke='black'/%3E%3Cpath d='M17 17H15L16 18L17 17Z' fill='black'/%3E%3Cline x1='14.5' y1='15' x2='14.5' y2='16' stroke='black'/%3E%3C/svg%3E%0A");
@@ -101,8 +99,8 @@
 
   body.sticky #message-content {
     background-color:#FCF3C4;
-    min-height:128px;
     margin:0 1em;
+    height:64px;
     display:flex;
     align-items: center;
     justify-content: center;
@@ -110,31 +108,37 @@
 
   body.bubble #message-content {
     background-color:#f1f1f1;
-    height:3em;
     margin:0 1em;
-    min-height:64px;
+    height:64px;
     border-radius: 24px 24px 24px 0;
     display:flex;
     align-items: center;
     justify-content: center;
   }
 
+  body.sticky .tab#sticky,
+  body.bubble .tab#bubble {
+    display:none
+  }
   body.sticky #message-content:before {
     content:"";
     position:absolute;
     bottom:0;
-    right:0;
-    border-width:0 0 30px 30px;
-    border-style:solid;
-    border-color:rgba(0,0,0,0.1) white white rgba(0,0,0,0.1);
+    left:0;
+    border-width: 16px 0 0 16px;
+    border-style: solid;
+    border-color: rgb(0,0,0,0.1) transparent transparent white;
   }
 
-
+ #meme-content, #settings-content {
+   display:none;
+ }
   #message:focus {
     outline: none;
   }
 
   #message {
+    text-align:center;
     font-size:16pt;
     width:100%;
     height:40px;
@@ -143,12 +147,15 @@
     margin:8px;
     border:none;
     background:none;
+    margin-bottom:auto
   }
 
-  body.emoji #emoji-content.content {
+  #emoji-content.content {
     display:flex;
     flex-flow: row wrap;
     padding:0em;
+    border-bottom:1px solid #eee;
+    margin-bottom:0.5em;
   }
   
   .emoji-button {
@@ -211,7 +218,7 @@
 
 </style>
 
-<footer>
+<!-- <footer>
   <div class="tabs">
     <span class="tab" id="emoji" onclick="select(this)"></span>
     <span class="tab" id="bubble" onclick="select(this)"></span>
@@ -220,7 +227,7 @@
     <span class="spacer"></span>
     <span class="tab" id="settings" onclick="select(this)"></span>
   </div> 
-</footer>
+</footer> -->
 
 
 <div class="content" id="emoji-content">
@@ -244,8 +251,16 @@
   <span class="emoji-button">✅</span>
 </div>
 
+
+
+<div class="content" id="message-content">                 
+  <input id="message" placeholder="type here">
+</div>
+
 <div class="content" id="color-content">                 
   <div class="colors">
+    <span class="tab" id="bubble" onclick="select(this)"></span>
+    <span class="tab" id="sticky" onclick="select(this)"></span>
     <div class="color-button" style="background-color:#ffffff"></div>
     <div class="color-button" style="background-color:#EEEDEC"></div>
     <div class="color-button" style="background-color:#FCE8E9"></div>
@@ -257,11 +272,7 @@
   </div>
 </div>
 
-<div class="content" id="message-content">                 
-  <input id="message" placeholder="Message Content">
-</div>
-
-<div class="content" id="meme-content">
+<!-- <div class="content" id="meme-content">
   <label for="name">Type</label> 
   <input id="meme-type" placeholder="meme type">
   <label for="name">Top Text</label> 
@@ -274,7 +285,7 @@
 <div class="content" id="settings-content">
   <label for="name">Name:</label> 
   <input id="name" placeholder="Your Name">
-</div>
+</div> -->
                     
 
 <script>
@@ -347,13 +358,13 @@ textbox.addEventListener("keyup", function(event) {
   }
 });
 
-const tempMemeButton = document.getElementById("temporary-meme-button");
-tempMemeButton.addEventListener("click",(e) => {
-  const memeType = document.getElementById('meme-type').value;
-  const topText = document.getElementById('meme-top-text').value;
-  const bottomText = document.getElementById('meme-bottom-text').value;
-  parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText, settings}}, '*')
-})
+// const tempMemeButton = document.getElementById("temporary-meme-button");
+// tempMemeButton.addEventListener("click",(e) => {
+//   const memeType = document.getElementById('meme-type').value;
+//   const topText = document.getElementById('meme-top-text').value;
+//   const bottomText = document.getElementById('meme-bottom-text').value;
+//   parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText, settings}}, '*')
+// })
 
 // image fetching only works in the UI for some reason
 onmessage = (e) => {

@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-figma.showUI(__html__, { width: 300, height: 240 });
+figma.showUI(__html__, { width: 300, height: 320 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let settings = yield figma.clientStorage.getAsync("settings");
@@ -165,7 +165,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
                 let now = new Date().getTime();
                 let progress = (now - then) / duration;
                 if (progress < 1.0) {
-                    group.y = startY - (Math.pow(10 * progress, 2) * scale);
+                    group.y = startY - (Math.pow(15 * progress, 2) * scale);
                     group.x = group.x += drift * scale;
                     group.opacity = 1.0 - Math.pow(progress, 2);
                 }
