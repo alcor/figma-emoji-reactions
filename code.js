@@ -124,14 +124,14 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         console.log(msg);
         // this scale factor might get really weird
         scale = scale * msg.reactionScale;
-        const frame = figma.createFrame();
-        frame.x = anchorX - frame.width / 2;
-        frame.y = anchorY - frame.height / 2;
+        const frame = figma.createRectangle();
         frame.resizeWithoutConstraints(72 * scale, 72 * scale);
-        frame.horizontalPadding = frame.verticalPadding = 24 * scale;
-        frame.layoutMode = "HORIZONTAL";
-        frame.primaryAxisSizingMode = "AUTO";
-        frame.counterAxisSizingMode = "AUTO";
+        frame.x = anchorX - 36 * scale;
+        frame.y = anchorY - 36 * scale;
+        // frame.horizontalPadding = frame.verticalPadding = 24 * scale
+        // frame.layoutMode = "HORIZONTAL"
+        // frame.primaryAxisSizingMode = "AUTO"
+        // frame.counterAxisSizingMode = "AUTO"
         frame.fills = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }];
         frame.strokeAlign = "INSIDE";
         frame.strokeWeight = 1;
@@ -139,16 +139,16 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.effects = shadowEffect;
         frame.cornerRadius = frame.height / 2;
         const text = figma.createText();
-        text.x = 10 * scale;
-        text.y = 10 * scale;
+        text.resizeWithoutConstraints(72 * scale, 72 * scale);
+        text.x = frame.x; //anchorX - 36 * scale
+        text.y = frame.y; //anchorY - 36 * scale
         text.characters = msg.content || "👍";
         text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
         text.fontName = font;
         text.fontSize = 42 * scale;
         text.textAlignHorizontal = "CENTER";
         text.textAlignVertical = "CENTER";
-        frame.appendChild(text);
-        const group = figma.group([frame], figma.currentPage);
+        const group = figma.group([text, frame], figma.currentPage);
         group.name = group.name = `${name ? name + ": " : ""}${text.characters}`;
         group.expanded = false;
         figma.currentPage.selection = [group];
