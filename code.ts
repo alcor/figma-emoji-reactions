@@ -171,23 +171,22 @@ figma.ui.onmessage = async (msg) => {
 
     if (msg.altPressed) {
       frame.opacity = 0.0;
-      var duration = 1.0 * 1000;
-      var breeze = (Math.random() * 2) - 1;
-      group.x += breeze * 4;
+      var duration = 2.0 * 1000;
+      var drift = (Math.random() * 2) - 1;
+      group.x += drift * 4;
       let startY = group.y;
       var then = new Date().getTime()
       var interval = setInterval((i) => {
         let now = new Date().getTime()
         let progress = (now - then) / duration
-        if (progress < 1) {
-          group.y = startY - (Math.pow(10 * progress, 2) * scale);  
-          group.x = group.x += breeze * scale;
-          group.opacity =  1.0 - progress;
+        if (progress < 1.0) {
+          group.y = startY - (Math.pow(15 * progress, 2) * scale);  
+          group.x = group.x += drift * scale;
+          group.opacity =  1.0 - Math.pow(progress, 2);
         } else {
           clearInterval(interval);
           group.remove()
         }
-
       },100)
     } else {
       figma.currentPage.selection = [group]
