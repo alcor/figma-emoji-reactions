@@ -39,15 +39,23 @@ figma.ui.onmessage = async (msg) => {
     var components = msg.color.match(/rgb\((\d+), ?(\d+), ?(\d+)\)/);
     color = {r: parseInt(components[1])/255, g: parseInt(components[2])/255, b: parseInt(components[3])/255}  
   }
-  
+  const bevelEffect:Effect = {
+    type: "INNER_SHADOW",
+    color: { r: 0, g: 0, b: 0, a: .25 },
+    offset: { x: -3, y: -3 },
+    radius: 0,
+    visible: true,
+    blendMode: "NORMAL",
+  }
+
   if (msg.type === 'add-bubble') {   // comment bubble
-    const frame = figma.createFrame()
+    const frame = figma.createRectangle()
     frame.resizeWithoutConstraints(128 * scale, 48 * scale)
     frame.x = anchorX
     frame.y = anchorY - frame.height
-    frame.layoutMode = "VERTICAL"
-    frame.horizontalPadding = 16 * scale
-    frame.verticalPadding = 8 * scale
+    // frame.layoutMode = "VERTICAL"
+    // frame.horizontalPadding = 16 * scale
+    // frame.verticalPadding = 8 * scale
     frame.layoutAlign = "STRETCH"
     frame.cornerRadius = frame.height / 2;
     frame.bottomLeftRadius = 0;
@@ -55,10 +63,14 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeWeight = 1
     frame.fills = [{ type: 'SOLID', color: color }]
     frame.strokes = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0}, opacity: 0.2 }]
-    frame.effects = [shadowEffect]
+    frame.effects = shadowEffect
 
     var string = msg.string || "❤️"
     const text = figma.createText()
+    
+    text.resizeWithoutConstraints(128 * scale, 48 * scale)
+    text.x = anchorX
+    text.y = anchorY - text.height
     text.layoutAlign = "STRETCH"
     text.fills = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0} }]
     text.characters = string
@@ -66,11 +78,10 @@ figma.ui.onmessage = async (msg) => {
     if (text.characters.length <= 3) text.fontSize = 48 * scale;
     text.textAlignHorizontal = 'CENTER'
     text.textAlignVertical = 'CENTER'
-    text.textAutoResize = "WIDTH_AND_HEIGHT"
+    // text.textAutoResize = "WIDTH_AND_HEIGHT"
     text.fontName = font
-    frame.appendChild(text)
 
-    var group = figma.group([frame], figma.currentPage)
+    var group = figma.group([text,frame], figma.currentPage)
     group.name = `${name || "Comment"}: ${text.characters}`
     group.expanded = false;
     figma.currentPage.selection = [group];
@@ -89,7 +100,7 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeAlign = "INSIDE"
     frame.strokeWeight = 1
     frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
-    frame.effects = [shadowEffect]
+    frame.effects = shadowEffect
 
     const text = figma.createText()
     text.resizeWithoutConstraints(180 * scale, 140 * scale)
@@ -133,7 +144,7 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeAlign = "INSIDE"
     frame.strokeWeight = 1
     frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
-    frame.effects = [shadowEffect]
+    frame.effects = shadowEffect
     frame.cornerRadius = frame.height/2
 
     const text = figma.createText()
@@ -183,7 +194,7 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeAlign = "INSIDE"
     frame.strokeWeight = 1
     frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
-    frame.effects = [shadowEffect]
+    frame.effects = shadowEffect
 
     const imageFrame = figma.createFrame()
     imageFrame.resizeWithoutConstraints(200, 200)
@@ -207,14 +218,23 @@ figma.ui.onmessage = async (msg) => {
 
 
 // shadow effect style
-const shadowEffect:Effect = {
+let shadowEffect: Array<Effect>  = [{
   type: "DROP_SHADOW",
-  color: { r: 0, g: 0, b: 0, a: .25 },
-  offset: { x: 4, y: 4 },
-  radius: 0,
+  color: { r: 0, g: 0, b: 0, a: .19 },
+  offset: { x: 0, y: 10 },
+  radius: 20,
   visible: true,
   blendMode: "NORMAL",
-}
+},{
+  type: "DROP_SHADOW",
+  color: { r: 0, g: 0, b: 0, a: .23 },
+  offset: { x: 0, y: 6 },
+  radius: 6,
+  visible: true,
+  blendMode: "NORMAL",
+}]
+
+
 
 // make image data into a fill
 function makeFillFromImageData(data) {
