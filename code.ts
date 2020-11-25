@@ -29,11 +29,10 @@ figma.ui.onmessage = async (msg) => {
 
   // TODO: figure out canvas position of a nested selection
   if (selection) {
-    anchorX = selection.x + selection.width;
-    anchorY = selection.y;
+    anchorX = selection.absoluteTransform[0][2] + selection.width;;
+    anchorY = selection.absoluteTransform[1][2];
   }
 
-  
   let color = {r: 1, g: 1, b: 1}
   
   if (msg.color) {

@@ -2,17 +2,15 @@
   body {margin:10px 0px }
   * {font-family: sans-serif}
 
-footer {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
+  footer {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
 
-  border-top:1px solid #eee;
-  background:#fafafa;
-}
- 
-
+    border-top:1px solid #eee;
+    background:#fafafa;
+  }
 
   .tabs {
     display:flex;
@@ -94,8 +92,6 @@ footer {
     display:flex;
   }
 
-
-
   #message-content {
     width:auto;
     height: auto;
@@ -123,7 +119,6 @@ footer {
     justify-content: center;
   }
 
-
   body.sticky #message-content:before {
     content:"";
     position:absolute;
@@ -139,7 +134,6 @@ footer {
     outline: none;
   }
 
-
   #message {
     font-size:16pt;
     width:100%;
@@ -149,8 +143,7 @@ footer {
     margin:8px;
     border:none;
     background:none;
-    }
-
+  }
 
   body.emoji #emoji-content.content {
     display:flex;
@@ -173,6 +166,7 @@ footer {
   #meme-content input {
     margin-bottom:8px;
   }
+
 </style>
 
 <footer>
@@ -248,15 +242,15 @@ var settings = {
   stickyColor:"#FFF1C8",
   name:""
 }
+
 function select(i) {
   console.log(i.id);
   settings.tab = i.id;
   saveSettings();
   document.body.className = i.id;
- 
-
   textbox.focus()
 }
+
 function saveSettings() {
   parent.postMessage({pluginMessage: {type: "settings", settings}}, '*')
   applyColors();
@@ -269,6 +263,7 @@ function applyColors() {
     document.getElementById("message-content").style.backgroundColor = settings.stickyColor;
   }
 }
+
 document.body.onclick = function(e){
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {
