@@ -192,7 +192,10 @@ figma.ui.onmessage = async (msg) => {
       figma.currentPage.selection = [group]
       figma.closePlugin()
     }
-
+    
+  /*
+    HIDE THE MEMES (FOR NOW?)
+  */
   // meme image
   } else if (msg.type === "add-meme") {
     var memeType = msg.memeType || "satisfied"

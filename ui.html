@@ -216,7 +216,7 @@
     <span class="tab" id="emoji" onclick="select(this)"></span>
     <span class="tab" id="bubble" onclick="select(this)"></span>
     <span class="tab" id="sticky" onclick="select(this)"></span>
-    <span class="tab" id="meme" onclick="select(this)"></span>
+    <!--<span class="tab" id="meme" onclick="select(this)"></span>-->
     <span class="spacer"></span>
     <span class="tab" id="settings" onclick="select(this)"></span>
   </div> 
@@ -347,13 +347,16 @@ textbox.addEventListener("keyup", function(event) {
   }
 });
 
-const tempMemeButton = document.getElementById("temporary-meme-button");
-tempMemeButton.addEventListener("click",(e) => {
-  const memeType = document.getElementById('meme-type').value;
-  const topText = document.getElementById('meme-top-text').value;
-  const bottomText = document.getElementById('meme-bottom-text').value;
-  parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText, settings}}, '*')
-})
+/*
+  NO MEMES (FOR NOW?)
+*/
+// const tempMemeButton = document.getElementById("temporary-meme-button");
+// tempMemeButton.addEventListener("click",(e) => {
+//   const memeType = document.getElementById('meme-type').value;
+//   const topText = document.getElementById('meme-top-text').value;
+//   const bottomText = document.getElementById('meme-bottom-text').value;
+//   parent.postMessage({pluginMessage: {type: "add-meme", memeType: memeType, topText: topText, bottomText: bottomText, settings}}, '*')
+// })
 
 // image fetching only works in the UI for some reason
 onmessage = (e) => {
