@@ -218,11 +218,11 @@
 </div>
 
 <div class="content" id="meme-content">
-  <label for="name">Type</label> 
+  <label for="meme-type">Type</label> 
   <input id="meme-type" placeholder="meme type">
-  <label for="name">Top Text</label> 
+  <label for="meme-top-text">Top Text</label> 
   <input id="meme-top-text" placeholder="top text">
-  <label for="name">Bottom Text</label> 
+  <label for="meme-bottom-text">Bottom Text</label> 
   <input id="meme-bottom-text" placeholder="bottom text">
   <button id="temporary-meme-button">Place meme</button>
 </div>
@@ -319,7 +319,7 @@ onmessage = (e) => {
       let url = e.data.pluginMessage.url
       fetch(url)
         .then(r => r.arrayBuffer())
-        .then(a => parent.postMessage({ pluginMessage: {type: 'image-data-received', data: new Uint8Array(a)} }, '*'))
+        .then(a => parent.postMessage({ pluginMessage: {type: 'image-data-received', data: new Uint8Array(a), settings}}, '*'))
         .catch(err => console.error({ err }))
   } else if (message.type === 'settings') {
     settings = message.settings;

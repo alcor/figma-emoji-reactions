@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+const FLATTEN = true;
 figma.showUI(__html__, { width: 300, height: 240 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -139,6 +140,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         const group = figma.group([frame], figma.currentPage);
         group.name = group.name = `${name ? name + ": " : ""}${text.characters}`;
         group.expanded = false;
+        figma.flatten([group]);
         figma.currentPage.selection = [group];
         if (!msg.altPressed) {
             figma.closePlugin();
@@ -146,8 +148,9 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         // meme image
     }
     else if (msg.type === "add-meme") {
+        console.log("meme");
         var memeType = msg.memeType || "satisfied";
-        var topText = msg.topText || "Wrote this code";
+        var topText = msg.topText || "Made a design";
         var bottomText = msg.bottomText || "Meme appeared";
         memeType = memeType.split(" ").join("_");
         topText = topText.split(" ").join("_");
