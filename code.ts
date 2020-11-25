@@ -1,5 +1,3 @@
-const FLATTEN: Boolean = true
-
 figma.showUI(__html__, {width:300, height:240});
 
 async function main() {
@@ -9,8 +7,6 @@ async function main() {
 }
   
 figma.ui.onmessage = async (msg) => {
-
-
   if (msg.type === 'settings') {
     console.log("Setting received", msg.settings)
     await figma.clientStorage.setAsync("settings", msg.settings)
@@ -29,7 +25,6 @@ figma.ui.onmessage = async (msg) => {
   let bounds = figma.viewport.bounds
   // TODO: check to make sure selection is visible / in bounds
   let selection = figma.currentPage.selection[0]
-  
   let name = msg.settings.name
 
   // TODO: figure out canvas position of a nested selection
@@ -44,7 +39,7 @@ figma.ui.onmessage = async (msg) => {
     var components = msg.color.match(/rgb\((\d+), ?(\d+), ?(\d+)\)/);
     color = {r: parseInt(components[1])/255, g: parseInt(components[2])/255, b: parseInt(components[3])/255}  
   }
-
+  
   if (msg.type === 'add-bubble') {   // comment bubble
     const frame = figma.createFrame()
     frame.resizeWithoutConstraints(128 * scale, 48 * scale)
@@ -153,7 +148,6 @@ figma.ui.onmessage = async (msg) => {
     const group = figma.group([frame], figma.currentPage)
     group.name = group.name = `${name ? name + ": " : ""}${text.characters}`
     group.expanded = false;
-    figma.flatten([group])
     figma.currentPage.selection = [group]
     
     if (!msg.altPressed) {
@@ -162,9 +156,8 @@ figma.ui.onmessage = async (msg) => {
 
   // meme image
   } else if (msg.type === "add-meme") {
-    console.log("meme")
     var memeType = msg.memeType || "satisfied"
-    var topText = msg.topText || "Made a design"
+    var topText = msg.topText || "Wrote this code"
     var bottomText = msg.bottomText || "Meme appeared"
     memeType = memeType.split(" ").join("_")
     topText = topText.split(" ").join("_")
@@ -175,6 +168,7 @@ figma.ui.onmessage = async (msg) => {
     figma.ui.postMessage({ type: 'getImageData', url })
   // handle image data
   } else if (msg.type === "image-data-received") {
+
     const frame = figma.createFrame()
     frame.x = anchorX - frame.width / 2
     frame.y = anchorY - frame.height / 2
