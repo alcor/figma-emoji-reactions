@@ -33,6 +33,11 @@ figma.ui.onmessage = async (msg) => {
     anchorY = selection.absoluteTransform[1][2];
   }
 
+  if (!msg.altPressed) {
+    figma.ui.hide();
+  }
+
+
   let color = {r: 1, g: 1, b: 1}
   
   if (msg.color) {
@@ -162,9 +167,30 @@ figma.ui.onmessage = async (msg) => {
     const group = figma.group([text, frame], figma.currentPage)
     group.name = group.name = `${name ? name + ": " : ""}${text.characters}`
     group.expanded = false;
-    figma.currentPage.selection = [group]
     
-    if (!msg.altPressed) {
+
+    if (msg.altPressed) {
+      frame.opacity = 0.0;
+      var duration = 1.0 * 1000;
+      var breeze = (Math.random() * 2) - 1;
+      group.x += breeze * 4;
+      let startY = group.y;
+      var then = new Date().getTime()
+      var interval = setInterval((i) => {
+        let now = new Date().getTime()
+        let progress = (now - then) / duration
+        if (progress < 1) {
+          group.y = startY - (Math.pow(10 * progress, 2) * scale);  
+          group.x = group.x += breeze * scale;
+          group.opacity =  1.0 - progress;
+        } else {
+          clearInterval(interval);
+          group.remove()
+        }
+
+      },100)
+    } else {
+      figma.currentPage.selection = [group]
       figma.closePlugin()
     }
 
