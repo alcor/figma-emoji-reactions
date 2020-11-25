@@ -158,10 +158,52 @@
     display: inline-block;
     width:60px;
     cursor: pointer;
+    display: inline-block;
+    transform: translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    backface-visibility: hidden;
+    -moz-osx-font-smoothing: grayscale;
+    transition-duration: 0.3s;
+    transition-property: all;
   }
-  .emoji-button:hover {
+  .emoji-button:hover,
+  .emoji-button:focus {
     background-color:#eee;
+    /* transform: scale(1.1); */
   }
+  .emoji-button:active {
+    background-color: rgba(255, 255, 255, 0);
+    transition-delay: .5s;
+    transition-duration: 3s;
+    transform: scale(2.25);
+    animation-name: emoji-shake;
+  }
+  @keyframes emoji-shake {
+  16.65% {
+    -webkit-transform: translateX(12px);
+    transform: translateX(12px);
+  }
+  33.3% {
+    -webkit-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  49.95% {
+    -webkit-transform: translateX(8px);
+    transform: translateX(8px);
+  }
+  66.6% {
+    -webkit-transform: translateX(-5px);
+    transform: translateX(-5px);
+  }
+  83.25% {
+    -webkit-transform: translateX(2px);
+    transform: translateX(2px);
+  }
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
 
   #meme-content input {
     margin-bottom:8px;
@@ -268,9 +310,8 @@ document.body.onclick = function(e){
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {
     var string = el.textContent;
-
     var altPressed = e.altKey
-    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings}}, '*')      
+    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings, reactionScale}}, '*')      
   } else if (el.className && el.className.indexOf('color-button')!=-1) {
     var color = el.style.backgroundColor;
     if (settings.tab === "bubble") {
@@ -326,6 +367,31 @@ onmessage = (e) => {
     applyColors()
     document.body.className = message.settings.tab;
   }
+}
+
+// big reaccs
+let reactStartPress
+let reactEndPress
+let reactHoldTime
+let reactionScale = 1
+const emojiButtons = document.querySelectorAll(".emoji-button")
+for (let btn of emojiButtons) {
+  btn.addEventListener("mousedown", (e) => {
+    reactStartPress = new Date()
+  })
+  btn.addEventListener("mouseup", (e) => {
+    reactEndPress = new Date()
+    reactHoldTime = (reactEndPress - reactStartPress) / 1000
+    reactionScale = timeToScale(reactHoldTime)
+  })
+}
+timeToScale = (time) => {
+  if (time < 0.5) {
+    time = 1
+  } else if (time > 3) {
+    time = 3
+  }
+  return time
 }
 
 </script>

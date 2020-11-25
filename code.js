@@ -112,6 +112,8 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     else if (msg.type === "add-emoji") {
         console.log("Emoji");
         console.log(msg);
+        // this scale factor might get really weird
+        scale = scale * msg.reactionScale;
         const frame = figma.createFrame();
         frame.x = anchorX - frame.width / 2;
         frame.y = anchorY - frame.height / 2;

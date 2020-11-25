@@ -117,6 +117,9 @@ figma.ui.onmessage = async (msg) => {
     console.log("Emoji")
     console.log(msg)
 
+    // this scale factor might get really weird
+    scale = scale * msg.reactionScale
+
     const frame = figma.createFrame()
     frame.x = anchorX - frame.width / 2
     frame.y = anchorY - frame.height / 2
