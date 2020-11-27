@@ -246,7 +246,7 @@
 
 <div class="content" id="color-content">                 
   <div class="colors">
-    <div class="color-button" style="background-color:#ffffff"></div>
+    <div class="color-button" style="background-color:#ffffff; border: 1px solid black;"></div>
     <div class="color-button" style="background-color:#EEEDEC"></div>
     <div class="color-button" style="background-color:#FCE8E9"></div>
     <div class="color-button" style="background-color:#FFE7CA"></div>
@@ -311,9 +311,9 @@ function applyColors() {
 document.body.onclick = function(e){
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {
-    var string = el.textContent;
-    var altPressed = e.altKey
-    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings, reactionScale}}, '*')      
+    // var string = el.textContent
+    // var altPressed = e.altKey
+    // parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings}}, '*')      
   } else if (el.className && el.className.indexOf('color-button')!=-1) {
     var color = el.style.backgroundColor;
     if (settings.tab === "bubble") {
@@ -325,6 +325,59 @@ document.body.onclick = function(e){
     textbox.focus()
   }
 }
+
+document.body.onmousedown = (e) => {
+  var el = window.event ? event.srcElement : e.target;
+  if (el.className && el.className.indexOf('emoji-button')!=-1) {
+    var string = el.textContent
+    var altPressed = e.altKey
+    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings}}, '*')  
+  }
+}
+
+document.body.onmouseup = (e) => {
+  var el = window.event ? event.srcElement : e.target;
+  if (el.className && el.className.indexOf('emoji-button')!=-1) {
+    var string = el.textContent
+    var altPressed = e.altKey
+    parent.postMessage({pluginMessage: {type: "emoji-mouseup", content: string, altPressed, settings}}, '*')  
+  }
+}
+
+
+// var mouseDownTimer
+// var reactStartPress
+// var reactEndPress
+// var reactHoldTime
+// var reactionScale = 1
+// const emojiButtons = document.querySelectorAll(".emoji-button")
+// for (let btn of emojiButtons) {
+//   btn.addEventListener("mousedown", (e) => {
+//     var string = el.textContent;
+//     var altPressed = e.altKey
+//     parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings, reactionScale}}, '*')  
+//     reactStartPress = new Date()    
+//     mouseDownTimer = setInterval(() => {
+//       console.log("down")    
+//     }, 25)
+//   })
+//   btn.addEventListener("mouseup", (e) => {
+//     reactEndPress = new Date()
+//     reactHoldTime = (reactEndPress - reactStartPress) / 1000
+//     reactionScale = timeToScale(reactHoldTime)
+//     parent.postMessage({pluginMessage: {type: "commit-emoji"}}, "*")
+//     clearInterval(mouseDownTimer)
+//   })
+// }
+timeToScale = (time) => {
+  if (time < 0.5) {
+    time = 1
+  } else if (time > 3) {
+    time = 3
+  }
+  return time
+}
+
 
 const textbox = document.getElementById('message');
 textbox.focus()
@@ -375,28 +428,28 @@ onmessage = (e) => {
 }
 
 // big reaccs
-let reactStartPress
-let reactEndPress
-let reactHoldTime
-let reactionScale = 1
-const emojiButtons = document.querySelectorAll(".emoji-button")
-for (let btn of emojiButtons) {
-  btn.addEventListener("mousedown", (e) => {
-    reactStartPress = new Date()
-  })
-  btn.addEventListener("mouseup", (e) => {
-    reactEndPress = new Date()
-    reactHoldTime = (reactEndPress - reactStartPress) / 1000
-    reactionScale = timeToScale(reactHoldTime)
-  })
-}
-timeToScale = (time) => {
-  if (time < 0.5) {
-    time = 1
-  } else if (time > 3) {
-    time = 3
-  }
-  return time
-}
+// var reactStartPress
+// var reactEndPress
+// var reactHoldTime
+// var reactionScale = 1
+// const emojiButtons = document.querySelectorAll(".emoji-button")
+// for (let btn of emojiButtons) {
+//   btn.addEventListener("mousedown", (e) => {
+//     reactStartPress = new Date()
+//   })
+//   btn.addEventListener("mouseup", (e) => {
+//     reactEndPress = new Date()
+//     reactHoldTime = (reactEndPress - reactStartPress) / 1000
+//     reactionScale = timeToScale(reactHoldTime)
+//   })
+// }
+// timeToScale = (time) => {
+//   if (time < 0.5) {
+//     time = 1
+//   } else if (time > 3) {
+//     time = 3
+//   }
+//   return time
+// }
 
 </script>

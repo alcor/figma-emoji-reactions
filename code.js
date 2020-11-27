@@ -15,7 +15,9 @@ function main() {
         figma.ui.postMessage({ type: 'settings', settings });
     });
 }
+var placedEmojiGroup;
 figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
+    console.log(msg);
     if (msg.type === 'settings') {
         console.log("Setting received", msg.settings);
         yield figma.clientStorage.setAsync("settings", msg.settings);
@@ -32,15 +34,14 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     // TODO: check to make sure selection is visible / in bounds
     let selection = figma.currentPage.selection[0];
     let name = msg.settings.name;
-    // TODO: figure out canvas position of a nested selection
     if (selection) {
         anchorX = selection.absoluteTransform[0][2] + selection.width;
         ;
         anchorY = selection.absoluteTransform[1][2];
     }
-    if (!msg.altPressed) {
-        figma.ui.hide();
-    }
+    // if (!msg.altPressed) {
+    //   figma.ui.hide();
+    // }
     let color = { r: 1, g: 1, b: 1 };
     if (msg.color) {
         var components = msg.color.match(/rgb\((\d+), ?(\d+), ?(\d+)\)/);
@@ -124,9 +125,11 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     }
     else if (msg.type === "add-emoji") {
         console.log("Emoji");
-        console.log(msg);
+        if (placedEmojiGroup !== undefined) {
+            return;
+        }
         // this scale factor might get really weird
-        scale = scale * msg.reactionScale;
+        // scale = scale * msg.reactionScale
         const frame = figma.createRectangle();
         frame.resizeWithoutConstraints(72 * scale, 72 * scale);
         frame.x = anchorX - 36 * scale;
@@ -154,7 +157,9 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         const group = figma.group([text, frame], figma.currentPage);
         group.name = group.name = `${name ? name + ": " : ""}${text.characters}`;
         group.expanded = false;
+        placedEmojiGroup = group;
         if (msg.altPressed) {
+            // floatmoji
             frame.opacity = 0.0;
             var duration = 2.0 * 1000;
             var drift = (Math.random() * 2) - 1;
@@ -165,7 +170,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
                 let now = new Date().getTime();
                 let progress = (now - then) / duration;
                 if (progress < 1.0) {
-                    group.y = startY - (Math.pow(10 * progress, 2) * scale);
+                    group.y = startY - (Math.pow(15 * progress, 2) * scale);
                     group.x = group.x += drift * scale;
                     group.opacity = 1.0 - Math.pow(progress, 2);
                 }
@@ -174,11 +179,43 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
                     group.remove();
                 }
             }, 100);
+            placedEmojiGroup = undefined;
         }
         else {
+            // bigmoji
+            var duration = 2.5 * 1000;
+            let startX = placedEmojiGroup.x + placedEmojiGroup.width / 2;
+            let startY = placedEmojiGroup.y + placedEmojiGroup.height / 2;
+            var then = new Date().getTime();
+            var interval = setInterval((i) => {
+                let now = new Date().getTime();
+                let progress = (now - then) / duration;
+                if (progress < 2.5 && placedEmojiGroup != undefined) {
+                    if (progress > 0.25) {
+                        frame.opacity = 0.0;
+                        let scaleFactor = translateValue(progress, [.5, 2.5], [1.0075, 1.0125]);
+                        placedEmojiGroup.rescale(scaleFactor);
+                        placedEmojiGroup.x = startX - placedEmojiGroup.width / 2;
+                        placedEmojiGroup.y = startY - placedEmojiGroup.height / 2;
+                    }
+                }
+                else {
+                    placedEmojiGroup = undefined;
+                    clearInterval(interval);
+                    // group.remove()
+                }
+            }, 25);
             figma.currentPage.selection = [group];
-            figma.closePlugin();
+            // figma.closePlugin()
         }
+    }
+    else if (msg.type === "emoji-mouseup") {
+        console.log("Emoji Mouse Up");
+        placedEmojiGroup = undefined;
+        figma.closePlugin();
+        /*
+          HIDE THE MEMES (FOR NOW?)
+        */
         // meme image
     }
     else if (msg.type === "add-meme") {
@@ -262,5 +299,11 @@ function makeFillFromImageData(data) {
         visible: true,
     };
     return ([newFill]);
+}
+// modulate a value from one range to another
+function translateValue(value, from, to) {
+    var scale = (to[1] - to[0]) / (from[1] - from[0]);
+    var capped = (from[1], (from[0], value)) - from[0];
+    return (capped * scale + to[0]);
 }
 main();
