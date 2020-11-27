@@ -178,7 +178,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
                     clearInterval(interval);
                     group.remove();
                 }
-            }, 100);
+            }, 25);
             placedEmojiGroup = undefined;
         }
         else {
@@ -209,7 +209,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
             // figma.closePlugin()
         }
     }
-    else if (msg.type === "emoji-mouseup") {
+    else if (msg.type === "emoji-mouseup" && !msg.altPressed) {
         console.log("Emoji Mouse Up");
         placedEmojiGroup = undefined;
         figma.closePlugin();

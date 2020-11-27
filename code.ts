@@ -194,7 +194,7 @@ figma.ui.onmessage = async (msg) => {
           clearInterval(interval);
           group.remove()
         }
-      },100)
+      },25)
       placedEmojiGroup = undefined
     } else {
       // bigmoji
@@ -222,7 +222,7 @@ figma.ui.onmessage = async (msg) => {
       figma.currentPage.selection = [group]
       // figma.closePlugin()
     }
-  } else if (msg.type === "emoji-mouseup") {
+  } else if (msg.type === "emoji-mouseup" && !msg.altPressed) {
     console.log("Emoji Mouse Up")
     placedEmojiGroup = undefined
     figma.closePlugin()
