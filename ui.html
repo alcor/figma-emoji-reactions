@@ -50,6 +50,19 @@
     flex-direction: column;
   }
 
+.hint {
+    margin-top:-3px;
+    padding:0 14px;
+    text-align:center;
+    opacity:0.33;
+    font-size:9px;;
+    flex-grow:1.0;
+    margin-bottom:4px;
+    opacity:0.0
+  }
+  #emoji-content:hover .hint {
+    opacity:0.333;
+  }
   .tab {
     width:20px; height:20px;
     background-position: center;
@@ -100,15 +113,20 @@
 
   body.sticky #message-content {
     background-color:#FCF3C4;
+    border:1px solid rgba(0,0,0,0.08);
     margin:0 1em;
     height:64px;
     display:flex;
     align-items: center;
     justify-content: center;
+    box-shadow: inset 0 -2px rgba(0,0,0,0.1)
   }
 
   body.bubble #message-content {
     background-color:#f1f1f1;
+    border:1px solid rgba(0,0,0,0.08);
+    box-shadow: inset 0 -2px rgba(0,0,0,0.1);
+
     margin:0 1em;
     height:64px;
     border-radius: 24px 24px 24px 0;
@@ -124,8 +142,8 @@
   body.sticky #message-content:before {
     content:"";
     position:absolute;
-    bottom:0;
-    left:0;
+    bottom:-1;
+    left:-1;
     border-width: 16px 0 0 16px;
     border-style: solid;
     border-color: rgb(0,0,0,0.1) transparent transparent #fafafa;
@@ -151,12 +169,17 @@
     margin-bottom:auto
   }
 
+  body.bubble #message {
+    text-align:left;
+  }
+
   #emoji-content.content {
     display:flex;
     flex-flow: row wrap;
     padding:0em;
     border-bottom:1px solid #eee;
     margin-bottom:0.5em;
+    user-select: none;
   }
   
   .emoji-button {
@@ -250,6 +273,7 @@
   <span class="emoji-button">😬</span>
   <span class="emoji-button">📍</span>
   <span class="emoji-button">✅</span>
+  <div class="hint"> right-click to emote</div>
 </div>
 
 
@@ -293,9 +317,9 @@
 document.body.className = "bubble";
 
 var settings = {
-  tab:"emoji",
-  bubbleColor:"white",
-  stickyColor:"#FCF3C4",
+  tab:"bubble",
+  bubbleColor:"rgb(255, 255, 255)",
+  stickyColor:"rgb(252, 243, 196)",
   name:""
 }
 
@@ -319,12 +343,12 @@ function applyColors() {
     document.getElementById("message-content").style.backgroundColor = settings.stickyColor;
   }
 }
-
-document.body.onclick = function(e){
+document.body.onmouseup = function(e){
+  console.log(e.button)
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {
     var string = el.textContent;
-    var altPressed = e.altKey
+    var altPressed = e.altKey || (e.button == 2)
     parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings, reactionScale}}, '*')      
   } else if (el.className && el.className.indexOf('color-button')!=-1) {
     var color = el.style.backgroundColor;
@@ -377,9 +401,9 @@ onmessage = (e) => {
         .then(a => parent.postMessage({ pluginMessage: {type: 'image-data-received', data: new Uint8Array(a), settings}}, '*'))
         .catch(err => console.error({ err }))
   } else if (message.type === 'settings') {
-    settings = message.settings;
+    if (message.settings) settings = message.settings;
     applyColors()
-    document.body.className = message.settings.tab;
+    document.body.className = settings.tab;
   }
 }
 
