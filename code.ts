@@ -1,4 +1,4 @@
-figma.showUI(__html__, {width:300, height:320});
+figma.showUI(__html__, {width:300, height:240});
 
 async function main() {
   let settings = await figma.clientStorage.getAsync("settings")
@@ -21,7 +21,7 @@ figma.ui.onmessage = async (msg) => {
   let anchorY = figma.viewport.center.y
 
   let zoom = figma.viewport.zoom
-  let s = 1 / zoom;
+  let scale = 1 / zoom;
   let bounds = figma.viewport.bounds
   // TODO: check to make sure selection is visible / in bounds
   let selection = figma.currentPage.selection[0]
@@ -44,53 +44,43 @@ figma.ui.onmessage = async (msg) => {
     var components = msg.color.match(/rgb\((\d+), ?(\d+), ?(\d+)\)/);
     color = {r: parseInt(components[1])/255, g: parseInt(components[2])/255, b: parseInt(components[3])/255}  
   }
-
   const bevelEffect:Effect = {
     type: "INNER_SHADOW",
-    color: { r: 0, g: 0, b: 0, a: 1 },
-    offset: { x: -1 * s, y: -3 * s },
+    color: { r: 0, g: 0, b: 0, a: .25 },
+    offset: { x: -3, y: -3 },
     radius: 0,
     visible: true,
-    blendMode: "SOFT_LIGHT",
-  }
-  // shadow effect style
-  let shadowEffect: Effect /*Array<Effect>*/  = {
-    type: "DROP_SHADOW",
-    color: { r: 0, g: 0, b: 0, a: 1},
-    offset: { x: 0, y: 1 * s },
-    radius: 3 * s,
-    visible: true,
-    blendMode: "SOFT_LIGHT",
+    blendMode: "NORMAL",
   }
 
   if (msg.type === 'add-bubble') {   // comment bubble
     const frame = figma.createRectangle()
-    frame.resizeWithoutConstraints(128 * s, 48 * s)
+    frame.resizeWithoutConstraints(128 * scale, 48 * scale)
     frame.x = anchorX
     frame.y = anchorY - frame.height
     // frame.layoutMode = "VERTICAL"
-    // frame.horizontalPadding = 16 * s
-    // frame.verticalPadding = 8 * s
+    // frame.horizontalPadding = 16 * scale
+    // frame.verticalPadding = 8 * scale
     frame.layoutAlign = "STRETCH"
     frame.cornerRadius = frame.height / 2;
     frame.bottomLeftRadius = 0;
     frame.strokeAlign = 'OUTSIDE'
-    frame.strokeWeight = 1 * s
+    frame.strokeWeight = 1
     frame.fills = [{ type: 'SOLID', color: color }]
     frame.strokes = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0}, opacity: 0.2 }]
-    frame.effects = [bevelEffect, shadowEffect]
+    frame.effects = shadowEffect
 
     var string = msg.string || "❤️"
     const text = figma.createText()
     
-    text.resizeWithoutConstraints(128 * s, 48 * s)
+    text.resizeWithoutConstraints(128 * scale, 48 * scale)
     text.x = anchorX
     text.y = anchorY - text.height
     text.layoutAlign = "STRETCH"
     text.fills = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0} }]
     text.characters = string
-    text.fontSize = 18 * s
-    if (text.characters.length <= 3) text.fontSize = 48 * s;
+    text.fontSize = 18 * scale
+    if (text.characters.length <= 3) text.fontSize = 48 * scale;
     text.textAlignHorizontal = 'CENTER'
     text.textAlignVertical = 'CENTER'
     // text.textAutoResize = "WIDTH_AND_HEIGHT"
@@ -105,30 +95,32 @@ figma.ui.onmessage = async (msg) => {
 
   // sticky note
   } else if (msg.type === "add-sticky") {
-    const frame = figma.createRectangle()
-    frame.resizeWithoutConstraints(200 * s, 160 * s)
+    const frame = figma.createFrame()
+    frame.resizeWithoutConstraints(200 * scale, 160 * scale)
     frame.x = anchorX - frame.width / 2
     frame.y = anchorY - frame.height / 2
+    frame.horizontalPadding = frame.verticalPadding = 16 * scale
     // frame.layoutMode = "VERTICAL"
     frame.fills = [{type: "SOLID", color: color}]
     frame.strokeAlign = "INSIDE"
-    frame.strokeWeight = 1 * s
-    frame.strokes = [{type: "SOLID", color: {r: 1, g: 1, b: 1}, opacity: 0.15}]
-    frame.effects = [bevelEffect, shadowEffect]
+    frame.strokeWeight = 1
+    frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
+    frame.effects = shadowEffect
 
     const text = figma.createText()
-    text.resizeWithoutConstraints(180 * s, 140 * s)
-    text.x = frame.x
-    text.y = frame.y
+    text.resizeWithoutConstraints(180 * scale, 140 * scale)
+    text.x = 10 * scale
+    text.y = 10 * scale
     text.characters = msg.content || "🤙"
     text.fills = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.8}]
     text.fontName = font
-    text.fontSize = 18 * s
+    text.fontSize = 18 * scale
     text.textAlignHorizontal = "CENTER"
     text.textAlignVertical ="CENTER"
 
+    frame.appendChild(text)
 
-    const group = figma.group([frame, text], figma.currentPage)
+    const group = figma.group([frame], figma.currentPage)
     group.name = `${name || "Sticky"}: ${text.characters}`
     group.expanded = false;
 
@@ -141,15 +133,15 @@ figma.ui.onmessage = async (msg) => {
     console.log("Emoji")
     console.log(msg)
 
-    // this s factor might get really weird
-    s = s * msg.reactionScale
+    // this scale factor might get really weird
+    scale = scale * msg.reactionScale
 
     const frame = figma.createRectangle()
-    frame.resizeWithoutConstraints(72 * s, 72 * s)
-    frame.x = anchorX - 36 * s
-    frame.y = anchorY - 36 * s
+    frame.resizeWithoutConstraints(72 * scale, 72 * scale)
+    frame.x = anchorX - 36 * scale
+    frame.y = anchorY - 36 * scale
 
-    // frame.horizontalPadding = frame.verticalPadding = 24 * s
+    // frame.horizontalPadding = frame.verticalPadding = 24 * scale
     // frame.layoutMode = "HORIZONTAL"
     // frame.primaryAxisSizingMode = "AUTO"
     // frame.counterAxisSizingMode = "AUTO"
@@ -157,18 +149,18 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeAlign = "INSIDE"
     frame.strokeWeight = 1
     frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
-    frame.effects = [bevelEffect, shadowEffect]
+    frame.effects = shadowEffect
     frame.cornerRadius = frame.height/2
 
     const text = figma.createText()
-    text.resizeWithoutConstraints(72 * s, 72 * s)
-    text.x = frame.x //anchorX - 36 * s
-    text.y = frame.y //anchorY - 36 * s
+    text.resizeWithoutConstraints(72 * scale, 72 * scale)
+    text.x = frame.x //anchorX - 36 * scale
+    text.y = frame.y //anchorY - 36 * scale
 
     text.characters = msg.content || "👍"
     text.fills = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.8}]
     text.fontName = font
-    text.fontSize = 42 * s
+    text.fontSize = 42 * scale
     text.textAlignHorizontal = "CENTER"
     text.textAlignVertical ="CENTER"
 
@@ -188,8 +180,8 @@ figma.ui.onmessage = async (msg) => {
         let now = new Date().getTime()
         let progress = (now - then) / duration
         if (progress < 1.0) {
-          group.y = startY - (Math.pow(15 * progress, 2) * s);  
-          group.x = group.x += drift * s;
+          group.y = startY - (Math.pow(15 * progress, 2) * scale);  
+          group.x = group.x += drift * scale;
           group.opacity =  1.0 - Math.pow(progress, 2);
         } else {
           clearInterval(interval);
@@ -230,7 +222,7 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeAlign = "INSIDE"
     frame.strokeWeight = 1
     frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
-    frame.effects = [bevelEffect, shadowEffect]
+    frame.effects = shadowEffect
 
     const imageFrame = figma.createFrame()
     imageFrame.resizeWithoutConstraints(200, 200)
@@ -251,6 +243,25 @@ figma.ui.onmessage = async (msg) => {
   }
 
 };
+
+
+// shadow effect style
+let shadowEffect: Array<Effect>  = [{
+  type: "DROP_SHADOW",
+  color: { r: 0, g: 0, b: 0, a: .19 },
+  offset: { x: 0, y: 10 },
+  radius: 20,
+  visible: true,
+  blendMode: "NORMAL",
+},{
+  type: "DROP_SHADOW",
+  color: { r: 0, g: 0, b: 0, a: .23 },
+  offset: { x: 0, y: 6 },
+  radius: 6,
+  visible: true,
+  blendMode: "NORMAL",
+}]
+
 
 
 // make image data into a fill
