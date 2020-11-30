@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-figma.showUI(__html__, { width: 300, height: 240 });
+figma.showUI(__html__, { width: 300, height: 320 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let settings = yield figma.clientStorage.getAsync("settings");
@@ -27,7 +27,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     let anchorX = figma.viewport.center.x;
     let anchorY = figma.viewport.center.y;
     let zoom = figma.viewport.zoom;
-    let scale = 1 / zoom;
+    let s = 1 / zoom;
     let bounds = figma.viewport.bounds;
     // TODO: check to make sure selection is visible / in bounds
     let selection = figma.currentPage.selection[0];
@@ -48,39 +48,48 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     }
     const bevelEffect = {
         type: "INNER_SHADOW",
-        color: { r: 0, g: 0, b: 0, a: .25 },
-        offset: { x: -3, y: -3 },
+        color: { r: 0, g: 0, b: 0, a: 1 },
+        offset: { x: -1 * s, y: -3 * s },
         radius: 0,
         visible: true,
-        blendMode: "NORMAL",
+        blendMode: "SOFT_LIGHT",
+    };
+    // shadow effect style
+    let shadowEffect = {
+        type: "DROP_SHADOW",
+        color: { r: 0, g: 0, b: 0, a: 1 },
+        offset: { x: 0, y: 1 * s },
+        radius: 3 * s,
+        visible: true,
+        blendMode: "SOFT_LIGHT",
     };
     if (msg.type === 'add-bubble') { // comment bubble
         const frame = figma.createRectangle();
-        frame.resizeWithoutConstraints(128 * scale, 48 * scale);
+        frame.resizeWithoutConstraints(128 * s, 48 * s);
         frame.x = anchorX;
         frame.y = anchorY - frame.height;
         // frame.layoutMode = "VERTICAL"
-        // frame.horizontalPadding = 16 * scale
-        // frame.verticalPadding = 8 * scale
+        // frame.horizontalPadding = 16 * s
+        // frame.verticalPadding = 8 * s
         frame.layoutAlign = "STRETCH";
         frame.cornerRadius = frame.height / 2;
         frame.bottomLeftRadius = 0;
         frame.strokeAlign = 'OUTSIDE';
-        frame.strokeWeight = 1;
+        frame.strokeWeight = 1 * s;
         frame.fills = [{ type: 'SOLID', color: color }];
         frame.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 0.2 }];
-        frame.effects = shadowEffect;
+        frame.effects = [bevelEffect, shadowEffect];
         var string = msg.string || "❤️";
         const text = figma.createText();
-        text.resizeWithoutConstraints(128 * scale, 48 * scale);
+        text.resizeWithoutConstraints(128 * s, 48 * s);
         text.x = anchorX;
         text.y = anchorY - text.height;
         text.layoutAlign = "STRETCH";
         text.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
         text.characters = string;
-        text.fontSize = 18 * scale;
+        text.fontSize = 18 * s;
         if (text.characters.length <= 3)
-            text.fontSize = 48 * scale;
+            text.fontSize = 48 * s;
         text.textAlignHorizontal = 'CENTER';
         text.textAlignVertical = 'CENTER';
         // text.textAutoResize = "WIDTH_AND_HEIGHT"
@@ -93,29 +102,27 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         // sticky note
     }
     else if (msg.type === "add-sticky") {
-        const frame = figma.createFrame();
-        frame.resizeWithoutConstraints(200 * scale, 160 * scale);
+        const frame = figma.createRectangle();
+        frame.resizeWithoutConstraints(200 * s, 160 * s);
         frame.x = anchorX - frame.width / 2;
         frame.y = anchorY - frame.height / 2;
-        frame.horizontalPadding = frame.verticalPadding = 16 * scale;
         // frame.layoutMode = "VERTICAL"
         frame.fills = [{ type: "SOLID", color: color }];
         frame.strokeAlign = "INSIDE";
-        frame.strokeWeight = 1;
-        frame.strokes = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.15 }];
-        frame.effects = shadowEffect;
+        frame.strokeWeight = 1 * s;
+        frame.strokes = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 }, opacity: 0.15 }];
+        frame.effects = [bevelEffect, shadowEffect];
         const text = figma.createText();
-        text.resizeWithoutConstraints(180 * scale, 140 * scale);
-        text.x = 10 * scale;
-        text.y = 10 * scale;
+        text.resizeWithoutConstraints(180 * s, 140 * s);
+        text.x = frame.x;
+        text.y = frame.y;
         text.characters = msg.content || "🤙";
         text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
         text.fontName = font;
-        text.fontSize = 18 * scale;
+        text.fontSize = 18 * s;
         text.textAlignHorizontal = "CENTER";
         text.textAlignVertical = "CENTER";
-        frame.appendChild(text);
-        const group = figma.group([frame], figma.currentPage);
+        const group = figma.group([frame, text], figma.currentPage);
         group.name = `${name || "Sticky"}: ${text.characters}`;
         group.expanded = false;
         figma.currentPage.selection = [group];
@@ -125,13 +132,13 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     else if (msg.type === "add-emoji") {
         console.log("Emoji");
         console.log(msg);
-        // this scale factor might get really weird
-        scale = scale * msg.reactionScale;
+        // this s factor might get really weird
+        s = s * msg.reactionScale;
         const frame = figma.createRectangle();
-        frame.resizeWithoutConstraints(72 * scale, 72 * scale);
-        frame.x = anchorX - 36 * scale;
-        frame.y = anchorY - 36 * scale;
-        // frame.horizontalPadding = frame.verticalPadding = 24 * scale
+        frame.resizeWithoutConstraints(72 * s, 72 * s);
+        frame.x = anchorX - 36 * s;
+        frame.y = anchorY - 36 * s;
+        // frame.horizontalPadding = frame.verticalPadding = 24 * s
         // frame.layoutMode = "HORIZONTAL"
         // frame.primaryAxisSizingMode = "AUTO"
         // frame.counterAxisSizingMode = "AUTO"
@@ -139,16 +146,16 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.strokeAlign = "INSIDE";
         frame.strokeWeight = 1;
         frame.strokes = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.15 }];
-        frame.effects = shadowEffect;
+        frame.effects = [bevelEffect, shadowEffect];
         frame.cornerRadius = frame.height / 2;
         const text = figma.createText();
-        text.resizeWithoutConstraints(72 * scale, 72 * scale);
-        text.x = frame.x; //anchorX - 36 * scale
-        text.y = frame.y; //anchorY - 36 * scale
+        text.resizeWithoutConstraints(72 * s, 72 * s);
+        text.x = frame.x; //anchorX - 36 * s
+        text.y = frame.y; //anchorY - 36 * s
         text.characters = msg.content || "👍";
         text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
         text.fontName = font;
-        text.fontSize = 42 * scale;
+        text.fontSize = 42 * s;
         text.textAlignHorizontal = "CENTER";
         text.textAlignVertical = "CENTER";
         const group = figma.group([text, frame], figma.currentPage);
@@ -165,8 +172,8 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
                 let now = new Date().getTime();
                 let progress = (now - then) / duration;
                 if (progress < 1.0) {
-                    group.y = startY - (Math.pow(10 * progress, 2) * scale);
-                    group.x = group.x += drift * scale;
+                    group.y = startY - (Math.pow(15 * progress, 2) * s);
+                    group.x = group.x += drift * s;
                     group.opacity = 1.0 - Math.pow(progress, 2);
                 }
                 else {
@@ -206,7 +213,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.strokeAlign = "INSIDE";
         frame.strokeWeight = 1;
         frame.strokes = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.15 }];
-        frame.effects = shadowEffect;
+        frame.effects = [bevelEffect, shadowEffect];
         const imageFrame = figma.createFrame();
         imageFrame.resizeWithoutConstraints(200, 200);
         imageFrame.fills = makeFillFromImageData(msg.data);
@@ -221,22 +228,6 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         figma.closePlugin();
     }
 });
-// shadow effect style
-let shadowEffect = [{
-        type: "DROP_SHADOW",
-        color: { r: 0, g: 0, b: 0, a: .19 },
-        offset: { x: 0, y: 10 },
-        radius: 20,
-        visible: true,
-        blendMode: "NORMAL",
-    }, {
-        type: "DROP_SHADOW",
-        color: { r: 0, g: 0, b: 0, a: .23 },
-        offset: { x: 0, y: 6 },
-        radius: 6,
-        visible: true,
-        blendMode: "NORMAL",
-    }];
 // make image data into a fill
 function makeFillFromImageData(data) {
     let imageHash = figma.createImage(data).hash;
