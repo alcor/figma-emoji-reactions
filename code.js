@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-figma.showUI(__html__, { width: 300, height: 330 });
+figma.showUI(__html__, { width: 300, height: 320 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let settings = yield figma.clientStorage.getAsync("settings");
@@ -43,62 +43,57 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     }
     let color = { r: 1, g: 1, b: 1 };
     if (msg.color) {
-        console.log(msg.color);
         var components = msg.color.match(/rgb\((\d+), ?(\d+), ?(\d+)\)/);
-        if (components)
-            color = { r: parseInt(components[1]) / 255, g: parseInt(components[2]) / 255, b: parseInt(components[3]) / 255 };
+        color = { r: parseInt(components[1]) / 255, g: parseInt(components[2]) / 255, b: parseInt(components[3]) / 255 };
     }
-    var isWhite = color.r + color.g + color.b == 3;
-    console.log(isWhite, color.r + color.g + color.b);
     const bevelEffect = {
         type: "INNER_SHADOW",
-        color: { r: 0, g: 0, b: 0, a: isWhite ? 0.1 : 1 },
+        color: { r: 0, g: 0, b: 0, a: 1 },
         offset: { x: -1 * s, y: -3 * s },
         radius: 0,
         visible: true,
-        blendMode: isWhite ? "HARD_LIGHT" : "SOFT_LIGHT",
+        blendMode: "SOFT_LIGHT",
     };
     // shadow effect style
     let shadowEffect = {
         type: "DROP_SHADOW",
-        color: { r: 0, g: 0, b: 0, a: 0.2 },
+        color: { r: 0, g: 0, b: 0, a: 1 },
         offset: { x: 0, y: 1 * s },
         radius: 3 * s,
         visible: true,
-        blendMode: "HARD_LIGHT",
+        blendMode: "SOFT_LIGHT",
     };
     if (msg.type === 'add-bubble') { // comment bubble
-        let frame = figma.createRectangle();
-        var string = msg.string || "❤️";
-        const text = figma.createText();
-        text.characters = string;
-        text.fontName = font;
-        text.fontSize = text.characters.length <= 3 ? 36 * s : 18 * s;
-        text.textAlignHorizontal = 'LEFT';
-        text.textAlignVertical = 'CENTER';
-        text.textAutoResize = "WIDTH_AND_HEIGHT";
-        if (text.width > 240 * s) {
-            text.resizeWithoutConstraints(240 * s, 100 * s);
-            text.textAutoResize = "HEIGHT";
-        }
-        text.x = anchorX;
-        text.y = anchorY - text.height;
-        text.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
-        text.textAutoResize = "NONE";
-        frame.resizeWithoutConstraints(text.width + 30 * s, text.height + 20 * s);
-        frame.x = anchorX - 15 * s;
-        frame.y = anchorY - text.height - 10 * s;
+        const frame = figma.createRectangle();
+        frame.resizeWithoutConstraints(128 * s, 48 * s);
+        frame.x = anchorX;
+        frame.y = anchorY - frame.height;
         // frame.layoutMode = "VERTICAL"
         // frame.horizontalPadding = 16 * s
         // frame.verticalPadding = 8 * s
         frame.layoutAlign = "STRETCH";
-        frame.cornerRadius = 24 * s;
+        frame.cornerRadius = frame.height / 2;
         frame.bottomLeftRadius = 0;
-        frame.fills = [{ type: 'SOLID', color: color }];
-        frame.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 0.1 }];
         frame.strokeAlign = 'OUTSIDE';
         frame.strokeWeight = 1 * s;
+        frame.fills = [{ type: 'SOLID', color: color }];
+        frame.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 0.2 }];
         frame.effects = [bevelEffect, shadowEffect];
+        var string = msg.string || "❤️";
+        const text = figma.createText();
+        text.resizeWithoutConstraints(128 * s, 48 * s);
+        text.x = anchorX;
+        text.y = anchorY - text.height;
+        text.layoutAlign = "STRETCH";
+        text.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
+        text.characters = string;
+        text.fontSize = 18 * s;
+        if (text.characters.length <= 3)
+            text.fontSize = 48 * s;
+        text.textAlignHorizontal = 'CENTER';
+        text.textAlignVertical = 'CENTER';
+        // text.textAutoResize = "WIDTH_AND_HEIGHT"
+        text.fontName = font;
         var group = figma.group([text, frame], figma.currentPage);
         group.name = `${name || "Comment"}: ${text.characters}`;
         group.expanded = false;
@@ -108,25 +103,25 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     }
     else if (msg.type === "add-sticky") {
         const frame = figma.createRectangle();
-        const text = figma.createText();
-        text.resizeWithoutConstraints(200 * s, 160 * s);
-        text.characters = msg.content || "🤙";
-        text.fontName = font;
-        text.fontSize = 18 * s;
-        text.textAlignHorizontal = "CENTER";
-        text.textAlignVertical = "CENTER";
-        text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
-        text.x = anchorX - text.width / 2;
-        text.y = anchorY - text.height / 2;
-        frame.resizeWithoutConstraints(text.width + 10 * s, text.height + 10 * s);
+        frame.resizeWithoutConstraints(200 * s, 160 * s);
         frame.x = anchorX - frame.width / 2;
         frame.y = anchorY - frame.height / 2;
         // frame.layoutMode = "VERTICAL"
         frame.fills = [{ type: "SOLID", color: color }];
-        frame.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 0.1 }];
-        frame.strokeAlign = 'OUTSIDE';
+        frame.strokeAlign = "INSIDE";
         frame.strokeWeight = 1 * s;
+        frame.strokes = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 }, opacity: 0.15 }];
         frame.effects = [bevelEffect, shadowEffect];
+        const text = figma.createText();
+        text.resizeWithoutConstraints(180 * s, 140 * s);
+        text.x = frame.x;
+        text.y = frame.y;
+        text.characters = msg.content || "🤙";
+        text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
+        text.fontName = font;
+        text.fontSize = 18 * s;
+        text.textAlignHorizontal = "CENTER";
+        text.textAlignVertical = "CENTER";
         const group = figma.group([frame, text], figma.currentPage);
         group.name = `${name || "Sticky"}: ${text.characters}`;
         group.expanded = false;
@@ -135,12 +130,18 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         // emoji reaction  
     }
     else if (msg.type === "add-emoji") {
+        console.log("Emoji");
+        console.log(msg);
         // this s factor might get really weird
         s = s * msg.reactionScale;
         const frame = figma.createRectangle();
         frame.resizeWithoutConstraints(72 * s, 72 * s);
         frame.x = anchorX - 36 * s;
         frame.y = anchorY - 36 * s;
+        // frame.horizontalPadding = frame.verticalPadding = 24 * s
+        // frame.layoutMode = "HORIZONTAL"
+        // frame.primaryAxisSizingMode = "AUTO"
+        // frame.counterAxisSizingMode = "AUTO"
         frame.fills = [{ type: "SOLID", color: { r: 1, g: 1, b: 1 } }];
         frame.strokeAlign = "INSIDE";
         frame.strokeWeight = 1;
@@ -152,10 +153,6 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         text.x = frame.x; //anchorX - 36 * s
         text.y = frame.y; //anchorY - 36 * s
         text.characters = msg.content || "👍";
-        console.log("char");
-        if (text.characters == "❤️") {
-            text.y += 5 * s;
-        }
         text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
         text.fontName = font;
         text.fontSize = 42 * s;
@@ -166,7 +163,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         group.expanded = false;
         if (msg.altPressed) {
             frame.opacity = 0.0;
-            var duration = 1.0 * 1000;
+            var duration = 2.0 * 1000;
             var drift = (Math.random() * 2) - 1;
             group.x += drift * 4;
             let startY = group.y;
