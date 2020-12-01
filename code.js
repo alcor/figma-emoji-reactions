@@ -15,6 +15,12 @@ function main() {
         figma.ui.postMessage({ type: 'settings', settings });
     });
 }
+let activeEmoji = [];
+figma.on("close", () => {
+    activeEmoji.forEach(group => {
+        group.remove();
+    });
+});
 figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     if (msg.type === 'settings') {
         console.log("Setting received", msg.settings);
@@ -170,6 +176,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
             var drift = s * ((Math.random() * 2) - 1);
             group.x += drift * 4;
             let startY = group.y;
+            activeEmoji.push(group);
             var then = new Date().getTime();
             var interval = setInterval((i) => {
                 let now = new Date().getTime();
@@ -180,6 +187,9 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
                     group.opacity = 1.0 - Math.pow(progress, 2);
                 }
                 else {
+                    let i = activeEmoji.indexOf(group);
+                    if (i != -1)
+                        activeEmoji.splice(i, 1);
                     clearInterval(interval);
                     group.remove();
                 }
