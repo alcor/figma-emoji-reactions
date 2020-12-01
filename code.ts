@@ -1,4 +1,4 @@
-figma.showUI(__html__, {width:300, height:330});
+figma.showUI(__html__, {width:320, height:220});
 
 async function main() {
   let settings = await figma.clientStorage.getAsync("settings")
@@ -190,7 +190,7 @@ console.log(isWhite, color.r + color.g + color.b)
     if (msg.altPressed) {
       frame.opacity = 0.0;
       var duration = 1.0 * 1000;
-      var drift = (Math.random() * 2) - 1;
+      var drift = s * ((Math.random() * 2) - 1);
       group.x += drift * 4;
       let startY = group.y;
       var then = new Date().getTime()
