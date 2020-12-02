@@ -207,7 +207,7 @@ figma.ui.onmessage = async (msg) => {
       // floatmoji
       frame.opacity = 0.0;
       var duration = 1.0 * 1000;
-      var drift = s * ((Math.random() * 2) - 1);
+      var drift = s * ((Math.random() * 2) - 1) / 4;
       group.x += drift * 4;
       let startY = group.y;
       activeEmoji.push(group);
