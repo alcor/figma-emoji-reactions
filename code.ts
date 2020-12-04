@@ -207,8 +207,10 @@ figma.ui.onmessage = async (msg) => {
       // floatmoji
       frame.opacity = 0.0;
       var duration = 1.0 * 1000;
-      var drift = s * ((Math.random() * 2) - 1) / 4;
-      group.x += drift * 4;
+      var driftX = s * ((Math.random() * 2) - 1) / 4;
+      var driftY = s * ((Math.random() * 2) - 1) * 4;
+      group.x += driftX * 4;
+      group.y += driftY;
       let startY = group.y;
       activeEmoji.push(group);
       var then = new Date().getTime()
@@ -217,7 +219,7 @@ figma.ui.onmessage = async (msg) => {
         let progress = (now - then) / duration
         if (progress < 1.0) {
           group.y = startY - (Math.pow(15 * progress, 2) * s);  
-          group.x = group.x += drift * s;
+          group.x = group.x += driftX * s;
           group.opacity =  1.0 - Math.pow(progress, 2);
         } else {
           let i = activeEmoji.indexOf(group)

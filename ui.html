@@ -314,12 +314,22 @@ function applyColors() {
     document.getElementById("message-content").style.backgroundColor = settings.stickyColor;
   }
 }
+
+document.body.onmousedown = (e) => {
+  var el = window.event ? event.srcElement : e.target;
+  if (el.className && el.className.indexOf('emoji-button')!=-1) {
+    var string = el.textContent
+    var altPressed = e.altKey || e.button == 2
+    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings}}, '*')  
+  }
+}
+
 document.body.onmouseup = function(e){
   console.log(e.button)
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {
     var string = el.textContent
-    var altPressed = e.altKey
+    var altPressed = e.altKey || e.button == 2
     parent.postMessage({pluginMessage: {type: "emoji-mouseup", content: string, altPressed, settings}}, '*')  
   } else if (el.className && el.className.indexOf('color-button')!=-1) {
     console.log("COLOR")
@@ -334,14 +344,6 @@ document.body.onmouseup = function(e){
   }
 }
 
-document.body.onmousedown = (e) => {
-  var el = window.event ? event.srcElement : e.target;
-  if (el.className && el.className.indexOf('emoji-button')!=-1) {
-    var string = el.textContent
-    var altPressed = e.altKey
-    parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings}}, '*')  
-  }
-}
 
 
 timeToScale = (time) => {
