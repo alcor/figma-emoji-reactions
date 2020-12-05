@@ -15,15 +15,13 @@ figma.on("close", () => {
   })
  })
 
-
 figma.ui.onmessage = async (msg) => {
-
-  console.log(msg)
-
   if (msg.type === 'settings') {
     console.log("Setting received", msg.settings)
     await figma.clientStorage.setAsync("settings", msg.settings)
     return
+  } else if (msg.type === 'cancel') {
+    figma.closePlugin();
   }
 
   const font = { family: "Arimo", style: "Bold" }  
@@ -53,14 +51,12 @@ figma.ui.onmessage = async (msg) => {
   let color = {r: 1, g: 1, b: 1}
   
   if (msg.color) {
-    console.log(msg.color)
     var components = msg.color.match(/rgb\((\d+), ?(\d+), ?(\d+)\)/);
     if (components)
       color = {r: parseInt(components[1])/255, g: parseInt(components[2])/255, b: parseInt(components[3])/255}  
   }
 
   var isWhite = color.r + color.g + color.b == 3
-  console.log(isWhite, color.r + color.g + color.b)
   const bevelEffect:Effect = {
     type: "INNER_SHADOW",
     color: { r: 0, g: 0, b: 0, a: isWhite ? 0.1 : 1 },
@@ -122,7 +118,7 @@ figma.ui.onmessage = async (msg) => {
     group.expanded = false;
     figma.currentPage.selection = [group];
 
-    figma.closePlugin();
+    if (msg.ctrlKey) figma.closePlugin();
 
   // sticky note
   } else if (msg.type === "add-sticky") {
@@ -157,11 +153,10 @@ figma.ui.onmessage = async (msg) => {
 
     figma.currentPage.selection = [group]
 
-    figma.closePlugin();
+    if (msg.ctrlKey) figma.closePlugin();
     
   // emoji reaction  
   } else if (msg.type === "add-emoji") {
-    console.log("Emoji")
 
     if (placedEmojiGroup !== undefined) { return }
 
@@ -187,7 +182,6 @@ figma.ui.onmessage = async (msg) => {
     text.y = frame.y //anchorY - 36 * s
 
     text.characters = msg.content || "👍"
-    console.log("char", )
     if (text.characters == "❤️") {
       text.y += 5 * s
     }
@@ -227,7 +221,7 @@ figma.ui.onmessage = async (msg) => {
           clearInterval(interval);
           group.remove()
         }
-      },25)
+      }, 50)
       placedEmojiGroup = undefined
     } else {
       // bigmoji
@@ -256,10 +250,12 @@ figma.ui.onmessage = async (msg) => {
       // figma.closePlugin()
     }
   } else if (msg.type === "emoji-mouseup" && !msg.altPressed) {
-    console.log("Emoji Mouse Up")
     placedEmojiGroup = undefined
-    figma.closePlugin()
     
+    // figma.ui.hide();
+    // setTimeout(() => {
+    //   figma.ui.show();
+    // }, 100)
 
   /*
     HIDE THE MEMES (FOR NOW?)
@@ -307,7 +303,7 @@ figma.ui.onmessage = async (msg) => {
     figma.currentPage.selection = [group]
     
     // had to move this into each condition so it doesn't close before we get the image data
-    figma.closePlugin();
+    //figma.closePlugin();
   
   }
 

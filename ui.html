@@ -167,6 +167,10 @@
     background:none;
   }
 
+  #message::placeholder {
+    color: rgba(0, 0, 0, 0.3);
+  }
+
   body.bubble #message {
     text-align:left;
   }
@@ -295,7 +299,6 @@ var settings = {
 }
 
 function select(i) {
-  console.log(i.id);
   settings.tab = i.id;
   saveSettings();
   document.body.className = i.id;
@@ -325,14 +328,12 @@ document.body.onmousedown = (e) => {
 }
 
 document.body.onmouseup = function(e){
-  console.log(e.button)
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {
     var string = el.textContent
     var altPressed = e.altKey || e.button == 2
     parent.postMessage({pluginMessage: {type: "emoji-mouseup", content: string, altPressed, settings}}, '*')  
   } else if (el.className && el.className.indexOf('color-button')!=-1) {
-    console.log("COLOR")
     var color = el.style.backgroundColor;
     if (settings.tab === "bubble") {
       settings.bubbleColor = color;
@@ -358,21 +359,27 @@ timeToScale = (time) => {
 const textbox = document.getElementById('message');
 textbox.focus()
 
+document.body.addEventListener("keyup", function(event) {
+  if (event.key === "Escape") {
+    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+    event.preventDefault()
+  }
+})
+
 textbox.addEventListener("keyup", function(event) {
   if (event.keyCode === 13) {
-    console.log(document.body.className)
-    var altPressed = event.altKey
+    var altKey = event.altKey
+    var ctrlKey = event.ctrlKey
     event.preventDefault();
+    
     const string = textbox.value;
     switch (document.body.className) {
       case "sticky":
-        parent.postMessage({pluginMessage: {type: "add-sticky", content: string, color:settings.stickyColor, settings}}, '*')
+        parent.postMessage({pluginMessage: {type: "add-sticky", content: string, color:settings.stickyColor, settings, altKey, ctrlKey}}, '*')
         break;
       default:
-        parent.postMessage({ pluginMessage: { type: 'add-bubble', string,  color:settings.bubbleColor, settings} }, '*')
+        parent.postMessage({ pluginMessage: { type: 'add-bubble', string,  color:settings.bubbleColor, settings, altKey, ctrlKey} }, '*')
     }
-  } else if(event.key === "Escape") {
-    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
   }
 });
 
