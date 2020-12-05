@@ -7,10 +7,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-figma.showUI(__html__, { width: 320, height: 220 });
+let width = 320;
+let height = 220;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let settings = yield figma.clientStorage.getAsync("settings");
+        let firstRun = yield figma.clientStorage.getAsync("firstRun");
+        if (firstRun == undefined) { // Open shifted up one window to avoid occlusion
+            figma.showUI(__html__, { width: width, height: height * 3, visible: false });
+            figma.ui.show();
+            figma.ui.resize(width, height);
+            figma.clientStorage.setAsync("firstRun", true);
+        }
+        else {
+            figma.showUI(__html__, { width: width, height: height, visible: true });
+        }
         console.log("Loading settings");
         figma.ui.postMessage({ type: 'settings', settings });
     });
