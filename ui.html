@@ -383,17 +383,9 @@ textbox.addEventListener("keyup", function(event) {
   }
 });
 
-
-// image fetching only works in the UI for some reason
 onmessage = (e) => {
   let message = event.data.pluginMessage;
-  if (message.type === 'getImageData') {
-      let url = e.data.pluginMessage.url
-      fetch(url)
-        .then(r => r.arrayBuffer())
-        .then(a => parent.postMessage({ pluginMessage: {type: 'image-data-received', data: new Uint8Array(a), settings}}, '*'))
-        .catch(err => console.error({ err }))
-  } else if (message.type === 'settings') {
+  if (message.type === 'settings') {
     if (message.settings) settings = message.settings;
     applyColors()
     document.body.className = settings.tab;

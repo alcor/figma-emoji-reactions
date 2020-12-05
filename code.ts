@@ -266,55 +266,6 @@ figma.ui.onmessage = async (msg) => {
     // setTimeout(() => {
     //   figma.ui.show();
     // }, 100)
-
-  /*
-    HIDE THE MEMES (FOR NOW?)
-  */
-  // meme image
-  } else if (msg.type === "add-meme") {
-    var memeType = msg.memeType || "satisfied"
-    var topText = msg.topText || "Wrote this code"
-    var bottomText = msg.bottomText || "Meme appeared"
-    memeType = memeType.split(" ").join("_")
-    topText = topText.split(" ").join("_")
-    bottomText = bottomText.split(" ").join("_")
-    // really slow to use this proxy to avoid cors error
-    // we need to disable UI and show a loading state tho
-    const url = `https://cors-anywhere.herokuapp.com/https://urlme.me/${memeType}/${topText}/${bottomText}.jpg`
-    figma.ui.postMessage({ type: 'getImageData', url })
-  // handle image data
-  } else if (msg.type === "image-data-received") {
-
-    const frame = figma.createFrame()
-    frame.x = anchorX - frame.width / 2
-    frame.y = anchorY - frame.height / 2
-    frame.horizontalPadding = frame.verticalPadding = 8
-    frame.layoutMode = "HORIZONTAL"
-    frame.primaryAxisSizingMode = "AUTO"
-    frame.counterAxisSizingMode = "AUTO"
-    frame.fills = [{type: "SOLID", color: {r: 1, g: 1, b: 1}}]
-    frame.strokeAlign = "INSIDE"
-    frame.strokeWeight = 1
-    frame.strokes = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.15}]
-    frame.effects = [bevelEffect, shadowEffect]
-
-    const imageFrame = figma.createFrame()
-    imageFrame.resizeWithoutConstraints(200, 200)
-    imageFrame.fills = makeFillFromImageData(msg.data)
-    imageFrame.x = figma.viewport.center.x - imageFrame.width / 2
-    imageFrame.y = figma.viewport.center.y - imageFrame.height / 2
-
-    frame.appendChild(imageFrame)
-
-    const group = figma.group([frame], figma.currentPage)
-    group.name = `${name || "Meme"}: Meme`
-    group.expanded = false;
-
-    figma.currentPage.selection = [group]
-    
-    // had to move this into each condition so it doesn't close before we get the image data
-    //figma.closePlugin();
-  
   }
 
 };
