@@ -326,7 +326,13 @@ document.body.onmousedown = (e) => {
     parent.postMessage({pluginMessage: {type: "add-emoji", content: string, altPressed, settings}}, '*')  
   }
 }
+document.body.onmouseout = function(e) {
 
+  var el = window.event ? event.srcElement : e.target;
+  if (el.className && el.className.indexOf('emoji-button')!=-1) {
+    parent.postMessage({pluginMessage: {type: "emoji-mouseout", settings}}, '*')  
+  }
+}
 document.body.onmouseup = function(e){
   var el = window.event ? event.srcElement : e.target;
   if (el.className && el.className.indexOf('emoji-button')!=-1) {

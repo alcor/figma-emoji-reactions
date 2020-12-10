@@ -133,7 +133,7 @@ figma.ui.onmessage = async (msg) => {
   // sticky note
   } else if (msg.type === "add-sticky") {
 
-    const frame = figma.createRectangle()
+    const frame = figma.createFrame()
 
     const text = figma.createText()
     text.resizeWithoutConstraints(200 * s, 160 * s)
@@ -149,15 +149,24 @@ figma.ui.onmessage = async (msg) => {
     frame.resizeWithoutConstraints(text.width + 10 * s, text.height + 10 * s)
     frame.x = anchorX - frame.width / 2
     frame.y = anchorY - frame.height / 2
+
+    frame.paddingBottom = frame.paddingLeft = frame.paddingTop = frame.paddingRight = 10 * s
+    frame.layoutMode = "VERTICAL"
+    frame.primaryAxisSizingMode = "AUTO"
+    frame.counterAxisSizingMode = "AUTO"
+    frame.itemSpacing = 10 * s
+    //frame.primaryAxisAlignItems = "SPACE_BETWEEN"
+    frame.counterAxisAlignItems = "CENTER"
+
     // frame.layoutMode = "VERTICAL"
     frame.fills = [{type: "SOLID", color: color}]
     frame.strokes = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0}, opacity: 0.1 }]
     frame.strokeAlign = 'OUTSIDE'
     frame.strokeWeight = 1 * s
     frame.effects = [bevelEffect, shadowEffect]
+    frame.appendChild(text)
 
-
-    const group = figma.group([frame, text], figma.currentPage)
+    const group = figma.group([frame], figma.currentPage)
     group.name = `${name || "Sticky"}: ${text.characters}`
     group.expanded = false;
 
@@ -235,14 +244,14 @@ figma.ui.onmessage = async (msg) => {
       placedEmojiGroup = undefined
     } else {
       // bigmoji
-      var duration = 2.5 * 1000;
+      var duration = 2 * 1000;
       let startX = placedEmojiGroup.x + placedEmojiGroup.width/2;
       let startY = placedEmojiGroup.y + placedEmojiGroup.height/2;
       var then = new Date().getTime()
       var interval = setInterval((i) => {
         let now = new Date().getTime()
         let progress = (now - then) / duration
-        if (progress < 2.5 && placedEmojiGroup != undefined) {
+        if (progress < 1.5 && placedEmojiGroup != undefined) {
           if (progress > 0.25) {
             // frame.opacity = 0.0;
             let scaleFactor = translateValue(progress, [.5, 2.5], [1.0075, 1.0125])
@@ -259,7 +268,7 @@ figma.ui.onmessage = async (msg) => {
       figma.currentPage.selection = [group]
       // figma.closePlugin()
     }
-  } else if (msg.type === "emoji-mouseup" && !msg.altPressed) {
+  } else if (msg.type === "emoji-mouseup" && !msg.altPressed || msg.type === "emoji-mouseout") {
     placedEmojiGroup = undefined
     
     // figma.ui.hide();
