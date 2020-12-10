@@ -137,6 +137,18 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         text.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
         text.x = anchorX - text.width / 2;
         text.y = anchorY - text.height / 2;
+        text.layoutAlign = "STRETCH";
+        text.layoutGrow = 1;
+        const title = figma.createText();
+        title.resizeWithoutConstraints(200 * s, 0.01);
+        title.characters = "";
+        title.fontName = font;
+        title.fontSize = 9 * s;
+        title.textAlignHorizontal = "LEFT";
+        title.textAlignVertical = "BOTTOM";
+        title.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
+        title.x = anchorX - title.width / 2;
+        title.y = anchorY - title.height / 2;
         frame.resizeWithoutConstraints(text.width + 10 * s, text.height + 10 * s);
         frame.x = anchorX - frame.width / 2;
         frame.y = anchorY - frame.height / 2;
@@ -144,7 +156,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.layoutMode = "VERTICAL";
         frame.primaryAxisSizingMode = "AUTO";
         frame.counterAxisSizingMode = "AUTO";
-        frame.itemSpacing = 10 * s;
+        frame.itemSpacing = 1 * s;
         //frame.primaryAxisAlignItems = "SPACE_BETWEEN"
         frame.counterAxisAlignItems = "CENTER";
         // frame.layoutMode = "VERTICAL"
@@ -154,10 +166,12 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         frame.strokeWeight = 1 * s;
         frame.effects = [bevelEffect, shadowEffect];
         frame.appendChild(text);
+        //frame.appendChild(title)
+        frame.expanded = false;
         const group = figma.group([frame], figma.currentPage);
         group.name = `${name || "Sticky"}: ${text.characters}`;
-        group.expanded = false;
         figma.currentPage.selection = [group];
+        group.expanded = false;
         if (msg.ctrlKey)
             figma.closePlugin();
         // emoji reaction  
