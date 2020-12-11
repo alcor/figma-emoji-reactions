@@ -53,11 +53,6 @@ figma.ui.onmessage = async (msg) => {
     anchorY = selection.absoluteTransform[1][2];
   }
 
-  // if (!msg.altPressed) {
-  //   figma.ui.hide();
-  // }
-
-
   let color = {r: 1, g: 1, b: 1}
   
   if (msg.color) {
@@ -67,7 +62,7 @@ figma.ui.onmessage = async (msg) => {
   }
 
   var isWhite = color.r + color.g + color.b == 3
-  const bevelEffect:Effect = {
+  const bevelEffect:Effect = { // Bottom bezel style
     type: "INNER_SHADOW",
     color: { r: 0, g: 0, b: 0, a: isWhite ? 0.1 : 1 },
     offset: { x: -1 * s, y: -3 * s },
@@ -75,8 +70,8 @@ figma.ui.onmessage = async (msg) => {
     visible: true,
     blendMode: isWhite ? "HARD_LIGHT" : "SOFT_LIGHT",
   }
-  // shadow effect style
-  let shadowEffect: Effect /*Array<Effect>*/  = {
+  
+  let shadowEffect: Effect = { // Shadow effect style
     type: "DROP_SHADOW",
     color: { r: 0, g: 0, b: 0, a: 0.2},
     offset: { x: 0, y: 1 * s },
@@ -85,9 +80,9 @@ figma.ui.onmessage = async (msg) => {
     blendMode: "HARD_LIGHT",
   }
 
-  if (msg.type === 'add-bubble') {   // comment bubble
+  // comment bubble
+  if (msg.type === 'add-bubble') { 
     let frame = figma.createRectangle()
-
     var string = msg.string || "❤️"
 
     const text = figma.createText()
@@ -102,6 +97,7 @@ figma.ui.onmessage = async (msg) => {
       text.resizeWithoutConstraints(240 * s, 100 * s)
       text.textAutoResize = "HEIGHT"
     }
+
     text.x = anchorX
     text.y = anchorY - text.height
     text.fills = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0} }]
@@ -110,9 +106,6 @@ figma.ui.onmessage = async (msg) => {
     frame.resizeWithoutConstraints(text.width + 30 * s, text.height + 20 * s)
     frame.x = anchorX  - 15 * s
     frame.y = anchorY - text.height - 10 * s
-    // frame.layoutMode = "VERTICAL"
-    // frame.horizontalPadding = 16 * s
-    // frame.verticalPadding = 8 * s
     frame.layoutAlign = "STRETCH"
     frame.cornerRadius = 24 * s;
     frame.bottomLeftRadius = 0;
@@ -122,13 +115,13 @@ figma.ui.onmessage = async (msg) => {
     frame.strokeWeight = 1 * s
     frame.effects = [bevelEffect, shadowEffect]
 
-
     var group = figma.group([text,frame], figma.currentPage)
     group.name = `${name || "Comment"}: ${text.characters}`
     group.expanded = false;
     figma.currentPage.selection = [group];
 
     if (msg.ctrlKey) figma.closePlugin();
+
 
   // sticky note
   } else if (msg.type === "add-sticky") {
@@ -148,7 +141,6 @@ figma.ui.onmessage = async (msg) => {
     text.layoutAlign = "STRETCH"
     text.layoutGrow = 1
 
-
     const title = figma.createText()
     title.resizeWithoutConstraints(200 * s, 0.01)
     title.characters = ""
@@ -159,6 +151,7 @@ figma.ui.onmessage = async (msg) => {
     title.fills = [{type: "SOLID", color: {r: 0, g: 0, b: 0}, opacity: 0.8}]
     title.x = anchorX - title.width / 2
     title.y = anchorY - title.height / 2
+    title.layoutAlign = "STRETCH"
   
     frame.resizeWithoutConstraints(text.width + 10 * s, text.height + 10 * s)
     frame.x = anchorX - frame.width / 2
@@ -169,10 +162,8 @@ figma.ui.onmessage = async (msg) => {
     frame.primaryAxisSizingMode = "AUTO"
     frame.counterAxisSizingMode = "AUTO"
     frame.itemSpacing = 1 * s
-    //frame.primaryAxisAlignItems = "SPACE_BETWEEN"
     frame.counterAxisAlignItems = "CENTER"
 
-    // frame.layoutMode = "VERTICAL"
     frame.fills = [{type: "SOLID", color: color}]
     frame.strokes = [{ type: 'SOLID', color: {r: 0, g: 0, b: 0}, opacity: 0.1 }]
     frame.strokeAlign = 'OUTSIDE'
@@ -190,19 +181,16 @@ figma.ui.onmessage = async (msg) => {
 
     if (msg.ctrlKey) figma.closePlugin();
     
+
   // emoji reaction  
   } else if (msg.type === "add-emoji") {
 
     if (placedEmojiGroup !== undefined) { return }
 
-    // this s factor might get really weird
-    // s = s * msg.reactionScale
-
     const frame = figma.createRectangle()
     frame.resizeWithoutConstraints(72 * s, 72 * s)
     frame.x = anchorX - 36 * s
     frame.y = anchorY - 36 * s
-
 
     frame.fills = [{type: "SOLID", color: {r: 1, g: 1, b: 1}}]
     frame.strokeAlign = "INSIDE"
@@ -213,8 +201,8 @@ figma.ui.onmessage = async (msg) => {
 
     const text = figma.createText()
     text.resizeWithoutConstraints(72 * s, 72 * s)
-    text.x = frame.x //anchorX - 36 * s
-    text.y = frame.y //anchorY - 36 * s
+    text.x = frame.x
+    text.y = frame.y
 
     text.characters = msg.content || "👍"
     if (text.characters == "❤️") {
@@ -231,9 +219,8 @@ figma.ui.onmessage = async (msg) => {
     group.expanded = false;
     placedEmojiGroup = group
     
-
-    if (msg.altPressed) {
-      // floatmoji
+    if (msg.altPressed) { // floatmoji
+      
       frame.opacity = 0.0;
       var duration = 1.0 * 1000;
       var driftX = s * ((Math.random() * 2) - 1) / 4;
@@ -258,8 +245,9 @@ figma.ui.onmessage = async (msg) => {
         }
       }, 50)
       placedEmojiGroup = undefined
-    } else {
-      // bigmoji
+
+    } else { // bigmoji
+      
       var duration = 2 * 1000;
       let startX = placedEmojiGroup.x + placedEmojiGroup.width/2;
       let startY = placedEmojiGroup.y + placedEmojiGroup.height/2;
@@ -286,15 +274,8 @@ figma.ui.onmessage = async (msg) => {
     }
   } else if (msg.type === "emoji-mouseup" && !msg.altPressed || msg.type === "emoji-mouseout") {
     placedEmojiGroup = undefined
-    
-    // figma.ui.hide();
-    // setTimeout(() => {
-    //   figma.ui.show();
-    // }, 100)
   }
-
 };
-
 
 // make image data into a fill
 function makeFillFromImageData(data) {
@@ -331,6 +312,5 @@ function translateValue(value, from, to) {
 
 	return (capped * scale + to[0]);
 }
-
 
 main();

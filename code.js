@@ -149,6 +149,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         title.fills = [{ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity: 0.8 }];
         title.x = anchorX - title.width / 2;
         title.y = anchorY - title.height / 2;
+        title.layoutAlign = "STRETCH";
         frame.resizeWithoutConstraints(text.width + 10 * s, text.height + 10 * s);
         frame.x = anchorX - frame.width / 2;
         frame.y = anchorY - frame.height / 2;
