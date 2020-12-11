@@ -3,13 +3,15 @@
 This plugin creates reactions on the shared canvas, allowing you to easily create chat bubbles, sticky notes, and emoji and meme stickers.
 
 
-## To use this plugin:
+# How to get it:
 
-### Easiest: Install the public version
-The latest public version is available at:
-http://figma.emoji.chat
-
+## Easiest: Install the public version
+http://figma.emoji.chat - The latest public version
 Enjoy!
+
+
+[![Thumbnail](https://www.figma.com/community/plugin/910403390914550873/thumbnail)](http://figma.emoji.chat)
+
 
 ## To run the latest version locally:
 1.  Get the Figma desktop app
