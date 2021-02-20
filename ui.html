@@ -161,28 +161,43 @@
  #meme-content, #settings-content {
    display:none;
  }
-  #message:focus {
+  #message:focus
+  #caption:focus {
     outline: none;
   }
 
-  #message {
+  #message, #caption {
     text-align:center;
     font-size:15px;
     width:100%;
-    height:40px;
+    height:30px;
     box-sizing: border-box;
     padding:3px;
     border:none;
     background:none;
   }
+  #message {
+    margin-top:8px;
+    margin-bottom:-2px;
+  }
+  #caption {
+    height:auto;
+    font-size:9px;
+    opacity:0.5;
+    padding:0;
+    margin:2px 0;
+  }
 
-  #message::placeholder {
+  #message::placeholder
+  #caption::placeholder {
     color: rgba(0, 0, 0, 0.3);
   }
 
-  body.bubble #message {
+  body.bubble #message,
+  body.bubble #caption {
     text-align:left;
   }
+
 
   #emoji-content.content {
     display:flex;
@@ -269,6 +284,7 @@
 
 <div class="content" id="message-content">
   <input id="message" placeholder="leave a message">
+  <input id="caption" placeholder="name" onchange="saveCaption()">
 </div>
 
 <div class="content" id="color-content">
@@ -305,15 +321,16 @@ function select(i) {
 
 function saveSettings() {
   parent.postMessage({pluginMessage: {type: "settings", settings}}, '*')
-  applyColors();
+  applySettings();
 }
 
-function applyColors() {
+function applySettings() {
   if (settings.tab === "bubble") {
     document.getElementById("message-content").style.backgroundColor = settings.bubbleColor;
   } else if (settings.tab === "sticky") {
     document.getElementById("message-content").style.backgroundColor = settings.stickyColor;
   }
+  document.getElementById("caption").value = settings.caption || ""
 }
 
 document.body.onmousedown = (e) => {
@@ -360,6 +377,7 @@ timeToScale = (time) => {
 }
 
 const textbox = document.getElementById('message');
+const captionbox = document.getElementById('caption');
 textbox.focus()
 
 document.body.addEventListener("keyup", function(event) {
@@ -369,28 +387,35 @@ document.body.addEventListener("keyup", function(event) {
   }
 })
 
-textbox.addEventListener("keyup", function(event) {
+function checkSubmit(event) {
   if (event.keyCode === 13) {
     var altKey = event.altKey
     var ctrlKey = event.ctrlKey
     event.preventDefault();
     
-    const string = textbox.value;
+    const string = textbox.value
+    const caption = captionbox.value
+    settings.caption = caption
+    saveSettings();
+
     switch (document.body.className) {
       case "sticky":
-        parent.postMessage({pluginMessage: {type: "add-sticky", content: string, color:settings.stickyColor, settings, altKey, ctrlKey}}, '*')
+        parent.postMessage({pluginMessage: {type: "add-sticky", string, color:settings.stickyColor, settings, altKey, ctrlKey}}, '*')
         break;
       default:
-        parent.postMessage({ pluginMessage: { type: 'add-bubble', string,  color:settings.bubbleColor, settings, altKey, ctrlKey} }, '*')
+        parent.postMessage({ pluginMessage: { type: 'add-bubble', string, color:settings.bubbleColor, settings, altKey, ctrlKey} }, '*')
     }
   }
-});
+};
+textbox.addEventListener("keyup", checkSubmit);
+captionbox.addEventListener("keyup", checkSubmit);
+
 
 onmessage = (e) => {
   let message = event.data.pluginMessage;
   if (message.type === 'settings') {
     if (message.settings) settings = message.settings;
-    applyColors()
+    applySettings()
     document.body.className = settings.tab;
   }
 }
