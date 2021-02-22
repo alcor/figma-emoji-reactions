@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 let width = 320;
-let height = 220;
+let height = 228;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let settings = yield figma.clientStorage.getAsync("settings");
@@ -191,7 +191,7 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
             if (caption)
                 frame.paddingBottom /= 3;
             frame.paddingLeft = 15 * s;
-            frame.itemSpacing = s * 10;
+            frame.itemSpacing = s * 6;
         }
         else {
             frame.resizeWithoutConstraints(text.width + 10 * s, text.height + 10 * s);

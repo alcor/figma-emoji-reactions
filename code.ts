@@ -1,5 +1,5 @@
 let width = 320
-let height = 220
+let height = 228
 
 async function main() {
   let settings = await figma.clientStorage.getAsync("settings")
@@ -196,7 +196,7 @@ x    text.textAutoResize = "WIDTH_AND_HEIGHT"
       frame.bottomLeftRadius = 0;
       if (caption) frame.paddingBottom /= 3
       frame.paddingLeft = 15 * s;
-      frame.itemSpacing = s * 10;
+      frame.itemSpacing = s * 6;
     } else {
       frame.resizeWithoutConstraints(text.width + 10 * s, text.height + 10 * s)
       frame.x = anchorX - frame.width / 2
