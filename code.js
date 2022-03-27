@@ -42,9 +42,9 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     else if (msg.type === 'cancel') {
         figma.closePlugin();
     }
-    const font = { family: "Arimo", style: "Bold" };
+    const font = { family: "Inter", style: "Regular" };
     yield figma.loadFontAsync(font);
-    yield figma.loadFontAsync({ family: "Roboto", style: "Regular" });
+    yield figma.loadFontAsync({ family: "Inter", style: "Medium" });
     let anchorX = figma.viewport.center.x;
     let anchorY = figma.viewport.center.y;
     let zoom = figma.viewport.zoom;

@@ -14,7 +14,7 @@ async function main() {
   }
   console.log("Loading settings")
   figma.ui.postMessage({type: 'settings', settings}) 
-}
+} 
 
 var placedEmojiGroup: GroupNode
   
@@ -34,9 +34,10 @@ figma.ui.onmessage = async (msg) => {
     figma.closePlugin();
   }
 
-  const font = { family: "Arimo", style: "Bold" }  
+  const font = { family: "Inter", style: "Regular" }
+  
   await figma.loadFontAsync(font)
-  await figma.loadFontAsync({ family: "Roboto", style: "Regular" })
+  await figma.loadFontAsync({ family: "Inter", style: "Medium" })
 
   let anchorX = figma.viewport.center.x
   let anchorY = figma.viewport.center.y
